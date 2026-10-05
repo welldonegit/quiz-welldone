@@ -38,7 +38,8 @@
   --wdq-gap: 12px;
   --wdq-ease: cubic-bezier(.2, .7, .2, 1);
   --wdq-dur: 150ms;
-  --wdq-screen-in: 350ms;
+  --wdq-screen-in: 560ms;                               /* плавна поява екрана */
+  --wdq-screen-ease: cubic-bezier(0.22, 1, 0.36, 1);    /* дуже м'який ease-out (quint) */
 }
 
 /* ─────────────────────────  БАЗА / СКИДАННЯ (локальне)  ───────────────────────── */
@@ -66,6 +67,9 @@
 .wdq-change svg { width: 16px; height: 16px; }
 .wdq *:focus { outline: none; }
 .wdq *:focus-visible { outline: 2px solid var(--wdq-ink); outline-offset: 3px; border-radius: 4px; }
+/* Поля форм: тонка сіра рамка 1px навколо самого заповнюваного поля (input/textarea) */
+.wdq input:focus-visible,
+.wdq textarea:focus-visible { outline: 1px solid #8A8A84; outline-offset: 2px; }
 
 /* ─────────────────────────  КАРКАС (embedded + modal)  ───────────────────────── */
 .wdq {
@@ -145,8 +149,21 @@
 }
 .wdq-scroll--pad { padding-bottom: 24px; }
 
-.wdq-scr { animation: wdqRise var(--wdq-screen-in) var(--wdq-ease) both; }
-@keyframes wdqRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+/* Поява екрена — ТІЛЬКИ при зміні кроку (клас .wdq-animate додається лише на переході),
+   щоб вибір відповіді не перезапускав анімацію. Вперед — з правого боку, назад — з лівого. */
+.wdq-animate.wdq-dir-fwd > .wdq-scr { animation: wdqInFwd var(--wdq-screen-in) var(--wdq-screen-ease) both; }
+.wdq-animate.wdq-dir-back > .wdq-scr { animation: wdqInBack var(--wdq-screen-in) var(--wdq-screen-ease) both; }
+/* fade завершується трохи раніше за рух — так перехід відчувається м'якшим */
+@keyframes wdqInFwd {
+  from { opacity: 0; transform: translate3d(22px, 0, 0); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes wdqInBack {
+  from { opacity: 0; transform: translate3d(-22px, 0, 0); }
+  60%  { opacity: 1; }
+  to   { opacity: 1; transform: none; }
+}
 
 /* ─────────────────────────  СТАРТ  ───────────────────────── */
 .wdq-start { display: flex; flex-direction: column; gap: 10px; }
@@ -248,7 +265,7 @@
 /* поле "інша сфера" */
 .wdq-other {
   display: flex; flex-direction: column; gap: 8px; background: var(--wdq-card);
-  border-radius: 18px; border: 1.5px solid var(--wdq-ink); padding: 12px 14px;
+  border-radius: 18px; border: 1px solid var(--wdq-ink); padding: 12px 14px;
 }
 .wdq-other label { font-size: 13px; font-weight: 600; }
 .wdq-field-bare {
@@ -337,7 +354,7 @@
 .wdq-expert-role { font-size: 12px; color: var(--wdq-muted); }
 .wdq-chip {
   align-self: flex-start; font-size: 12px; font-weight: 600; background: var(--wdq-yellow);
-  padding: 4px 9px; border-radius: var(--wdq-r-pill);
+  padding: 8px 9px; border-radius: var(--wdq-r-pill); /* більше вертикального паддингу (+4px зверху/знизу) */
 }
 .wdq-expert-comment { font-size: 13.5px; line-height: 1.5; color: var(--wdq-text-2); }
 
@@ -385,7 +402,7 @@
 /* ─────────────────────────  ПОСИЛАННЯ (7)  ───────────────────────── */
 .wdq-links-field {
   display: flex; flex-direction: column; gap: 10px; background: var(--wdq-card);
-  border-radius: 18px; border: 1.5px solid var(--wdq-ink); padding: 14px;
+  border-radius: 18px; border: 1px solid var(--wdq-ink); padding: 14px;
 }
 .wdq-links-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
 .wdq-links-ic {
@@ -414,9 +431,23 @@
 .wdq-contact-block { display: flex; flex-direction: column; gap: 12px; }
 .wdq-contact-block h1 { font-size: 25px; line-height: 1.15; font-weight: 700; letter-spacing: var(--wdq-tight); padding: 0 4px; }
 .wdq-contact-label { font-size: 13px; font-weight: 500; color: var(--wdq-text-3); padding: 0 4px; }
+/* перемикач способу контакту в Telegram (сегментований) */
+.wdq-tgmode {
+  display: inline-flex; align-self: flex-start; gap: 4px; padding: 4px;
+  background: var(--wdq-field-bg); border: 1px solid var(--wdq-line); border-radius: 14px;
+}
+.wdq-tgmode-btn {
+  display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent;
+  cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--wdq-muted);
+  padding: 9px 16px; border-radius: 10px; min-height: var(--wdq-tap);
+  transition: background var(--wdq-dur) var(--wdq-ease), color var(--wdq-dur) var(--wdq-ease);
+}
+.wdq-tgmode-btn svg { width: 16px; height: 16px; }
+.wdq-tgmode-at { font-weight: 700; }
+.wdq-tgmode-btn[aria-pressed="true"] { background: var(--wdq-ink); color: #FFFFFF; }
 .wdq-field {
   display: flex; align-items: center; gap: 12px; height: 64px; padding: 0 16px 0 10px;
-  background: var(--wdq-card); border-radius: 18px; border: 1.5px solid var(--wdq-ink);
+  background: var(--wdq-card); border-radius: 18px; border: 1px solid var(--wdq-ink);
 }
 .wdq-field--err { border-color: var(--wdq-error); }
 .wdq-field-ic {
@@ -678,6 +709,8 @@
 
   /* aside / картки */
   .wdq-aside { width: 372px; flex-shrink: 0; gap: 12px; }
+  /* картка експерта заповнює решту висоти правої колонки (без «дірки» знизу) */
+  .wdq-aside > .wdq-expert { flex-grow: 1; align-content: start; }
   .wdq-expert { border-radius: var(--wdq-r-block); padding: 22px; column-gap: 14px; row-gap: 14px; align-items: center; }
   .wdq-expert > .wdq-expert-av { grid-row: 1; }
   .wdq-expert > .wdq-expert-id { grid-column: 2; align-self: center; }
@@ -703,7 +736,7 @@
     overflow: visible; margin: 0; padding: 0;
   }
   .wdq-case { width: auto; }
-  .wdq-case-img, .wdq-case-ph { height: 170px; }
+  .wdq-case-img, .wdq-case-ph { height: 194px; }
   .wdq-case-body { padding: 18px 20px 20px; gap: 14px; }
   .wdq-case-name { font-size: 16px; }
   .wdq-metric-v { font-size: 32px; letter-spacing: -0.045em; }

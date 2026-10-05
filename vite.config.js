@@ -13,9 +13,10 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: false,
+    host: true, // слухати на всіх інтерфейсах (0.0.0.0) — щоб порт форвардився у devcontainer/віддалено
     proxy: {
-      "/api": { target: "http://localhost:3001", changeOrigin: true },
-      "/assets": { target: "http://localhost:3001", changeOrigin: true },
+      "/api": { target: "http://127.0.0.1:3001", changeOrigin: true },
+      "/assets": { target: "http://127.0.0.1:3001", changeOrigin: true },
     },
   },
 });

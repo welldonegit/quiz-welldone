@@ -1,7 +1,8 @@
 // Валідація payload заявки. Усі id-відповідей звіряються з ALLOWED (виведено з quiz-content.json).
 import { z } from "zod";
 import { ALLOWED } from "./content.js";
-import { isValidPhone, isValidUsername, formatPhone } from "./phone.js";
+import { isValidUsername, formatPhone } from "./phone.js";
+import { normalizeUaDigits, isKnownOperatorCode } from "../../shared/ua-mobile-codes.js";
 
 const trimmed = (max) => z.string().trim().max(max);
 const inSet = (set, msg) =>
@@ -34,19 +35,19 @@ const schema = z.object({
   hp: z.string().max(200).optional().default(""),
   started_at: z.string().max(40).optional().default(""),
 }).superRefine((data, ctx) => {
-  // контакт залежить від каналу
-  const ok = data.channel === "tg"
-    ? (isValidUsername(data.contact) || isValidPhone(data.contact))
-    : isValidPhone(data.contact);
-  if (!ok) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["contact"],
-      message: data.channel === "tg"
-        ? "Вкажіть повний номер у форматі +380 XX XXX XX XX або @username"
-        : "Вкажіть повний номер у форматі +380 XX XXX XX XX",
-    });
+  // Telegram-username — приймаємо як є
+  if (data.channel === "tg" && isValidUsername(data.contact)) return;
+  // інакше — перевірка телефону (12 цифр + код мобільного оператора зі списку)
+  const d = normalizeUaDigits(data.contact);
+  let message = null;
+  if (d.length !== 12) {
+    message = data.channel === "tg"
+      ? "Вкажіть повний номер у форматі +380 XX XXX XX XX або @username"
+      : "Вкажіть повний номер у форматі +380 XX XXX XX XX";
+  } else if (!isKnownOperatorCode(d.slice(3, 5))) {
+    message = "Невідомий код мобільного оператора";
   }
+  if (message) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["contact"], message });
 });
 
 export function validateLead(raw) {

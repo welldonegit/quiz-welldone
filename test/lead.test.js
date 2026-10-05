@@ -184,3 +184,46 @@ test("нормалізація телефону 0671234567 → +380 67 123 45 67
   assert.equal(readLines().pop().contact, "+380 67 123 45 67");
   await s.close();
 });
+
+test("валідні коди операторів (067, 077, 075, 039) → 200", async () => {
+  clearLeads();
+  const s = await startServer();
+  for (const num of ["0671234567", "0771234567", "0751234567", "0391234567"]) {
+    const r = await post(s.base, validPayload({ channel: "viber", contact: num }));
+    assert.equal(r.status, 200, "мав пройти: " + num);
+  }
+  assert.equal(readLines().length, 4);
+  await s.close();
+});
+
+test("невалідні коди (089 IP, 044 стаціонарний, 012) → 400 'Невідомий код мобільного оператора'", async () => {
+  clearLeads();
+  const s = await startServer();
+  for (const num of ["0891234567", "0441234567", "0121234567"]) {
+    const r = await post(s.base, validPayload({ channel: "call", contact: num }));
+    assert.equal(r.status, 400, "мав відхилитись: " + num);
+    const j = await r.json();
+    assert.equal(j.errors.contact, "Невідомий код мобільного оператора", "повідомлення для " + num);
+  }
+  assert.equal(readLines().length, 0);
+  await s.close();
+});
+
+test("різні формати валідного номера нормалізуються й проходять", async () => {
+  clearLeads();
+  const s = await startServer();
+  for (const num of ["0671234567", "380671234567", "+38 (067) 123-45-67"]) {
+    const r = await post(s.base, validPayload({ channel: "viber", contact: num }));
+    assert.equal(r.status, 200, "мав пройти: " + num);
+    assert.equal(readLines().pop().contact, "+380 67 123 45 67");
+  }
+  await s.close();
+});
+
+test("Telegram username лишається валідним попри перевірку коду", async () => {
+  clearLeads();
+  const s = await startServer();
+  const r = await post(s.base, validPayload({ channel: "tg", contact: "well_done" }));
+  assert.equal(r.status, 200);
+  await s.close();
+});

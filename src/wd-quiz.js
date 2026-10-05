@@ -4,6 +4,10 @@
 
 import { CONTENT } from "./wd-quiz-content.js";
 import { ICONS } from "./wd-quiz-icons.js";
+import { normalizeUaDigits, isKnownOperatorCode, isValidUaMobile } from "../shared/ua-mobile-codes.js";
+
+// Підказка про код оператора (жива валідація телефону)
+const OP_HINT = "Перевірте код оператора. Номер має починатися, наприклад, з 050, 067, 073, 093";
 
 /* ───────────────────────── КОНФІГ ───────────────────────── */
 export const QUIZ_CONFIG = Object.assign(
@@ -145,7 +149,10 @@ class WDQuiz {
     if (!this.state.lead_id) this.state.lead_id = genUuid();
     if (!this.state.started_at) this.state.started_at = new Date().toISOString();
     this.state.hp = "";
+    if (!this.state.tgMode) this.state.tgMode = "phone"; // спосіб контакту для Telegram: phone | username
     this.serverErr = null;
+    this.dir = "fwd";      // напрямок анімації екрана
+    this.animate = true;   // анімувати лише перший показ і переходи між кроками
     this.save();
 
     this.root.classList.add("wdq");
@@ -181,17 +188,18 @@ class WDQuiz {
   clearStore() { try { localStorage.removeItem(QUIZ_CONFIG.storageKey); } catch (e) {} }
 
   /* ───── навігація ───── */
-  go(step) {
+  go(step, dir = "fwd") {
     clearTimeout(this.t);
+    this.dir = dir;        // напрямок переходу для анімації (fwd/back)
+    this.animate = true;   // анімуємо зміну кроку
     const prev = this.state.step;
     this.state.step = step;
     this.state.err = false;
     this.netError = "";
     if (step === "cases") this.state.caseIdx = 0;
 
-    // маска: підставляємо +380 при вході на крок контакту (крім Telegram)
-    const ch = this.state.a.q7 || "tg";
-    if (step === "q8" && ch !== "tg") {
+    // маска: підставляємо +380 при вході на крок контакту (крім режиму username у Telegram)
+    if (step === "q8" && !this.isUsernameMode()) {
       const cur = this.state.contact || "";
       if (!cur.replace(/\D/g, "").length || /^@/.test(cur)) this.state.contact = "+380 ";
     }
@@ -208,8 +216,8 @@ class WDQuiz {
     else if (step === "links") { const t = this.root.querySelector(".wdq-textarea"); if (t) setTimeout(() => t.focus(), 30); }
     else if (prev !== step && step === "q1") { /* нічого */ }
   }
-  next() { const i = ORDER.indexOf(this.state.step); if (i < ORDER.length - 1) this.go(ORDER[i + 1]); }
-  back() { track("quiz_back", { from_step: this.state.step }); const i = ORDER.indexOf(this.state.step); if (i > 0) this.go(ORDER[i - 1]); }
+  next() { const i = ORDER.indexOf(this.state.step); if (i < ORDER.length - 1) this.go(ORDER[i + 1], "fwd"); }
+  back() { track("quiz_back", { from_step: this.state.step }); const i = ORDER.indexOf(this.state.step); if (i > 0) this.go(ORDER[i - 1], "back"); }
 
   focusContact() {
     setTimeout(() => {
@@ -233,17 +241,57 @@ class WDQuiz {
       a[qid] = cur;
       track("quiz_answer", { step: qid, value: cur.join(",") });
       this.save();
-      this.render();
+      this.syncAfterPick(qid); // точкове оновлення без перебудови екрана (без смикання)
     } else {
+      const prev = a[qid];
       a[qid] = oid;
       track("quiz_answer", { step: qid, value: oid });
       this.save();
-      this.render();
       const opt = find(qid, oid);
+      // q1 «Інша сфера»: показ/приховання поля вводу змінює розмітку → потрібен повний (але без анімації) рендер
+      if (qid === "q1" && (oid === "other" || prev === "other")) {
+        this.render();
+        if (oid === "other") { const inp = this.root.querySelector("#wdq-other"); if (inp) setTimeout(() => inp.focus(), 30); }
+      } else {
+        this.syncAfterPick(qid);
+      }
       if (q.auto && !(opt && opt.custom)) {
         clearTimeout(this.t);
         this.t = setTimeout(() => this.next(), QUIZ_CONFIG.autoAdvanceMs);
       }
+    }
+  }
+
+  // Точкове оновлення стану відповідей і кнопки «Далі» без повного ререндеру екрана.
+  syncAfterPick(qid) {
+    const q = Q[qid];
+    const a = this.state.a;
+    const r = this.root;
+    r.querySelectorAll(".wdq-opt[data-pick]").forEach((btn) => {
+      const id = btn.getAttribute("data-pick");
+      const on = q.multi ? (a[qid] || []).indexOf(id) >= 0 : a[qid] === id;
+      btn.setAttribute("aria-checked", on ? "true" : "false");
+    });
+    const answered = q.multi ? (a[qid] || []).length > 0 : !!a[qid];
+    const note = answered ? "" : q.multi ? "Оберіть хоча б один варіант" : "Оберіть варіант відповіді";
+    // mobile: липкий футер
+    const fCta = r.querySelector(".wdq-footer .wdq-cta");
+    if (fCta) fCta.disabled = !answered;
+    this._setNote(r.querySelector(".wdq-footer"), note, "append");
+    // desktop: внутрішня навігація
+    const dCta = r.querySelector(".wdq-nav-d .wdq-cta-d");
+    if (dCta) dCta.disabled = !answered;
+    this._setNote(r.querySelector(".wdq-nav-d-right"), note, "prepend");
+  }
+
+  _setNote(container, text, pos) {
+    if (!container) return;
+    let el = Array.prototype.find.call(container.children, (c) => c.classList && c.classList.contains("wdq-cta-note"));
+    if (text) {
+      if (!el) { el = document.createElement("span"); el.className = "wdq-cta-note"; pos === "prepend" ? container.prepend(el) : container.appendChild(el); }
+      el.textContent = text;
+    } else if (el) {
+      el.remove();
     }
   }
 
@@ -260,8 +308,38 @@ class WDQuiz {
   valid() {
     const v = (this.state.contact || "").trim();
     const ch = this.state.a.q7 || "tg";
-    if (ch === "tg" && /^@?[A-Za-z][A-Za-z0-9_]{3,31}$/.test(v)) return true;
-    return v.replace(/\D/g, "").length === 12;
+    if (ch === "tg" && (this.state.tgMode || "phone") === "username") {
+      return /^@?[A-Za-z][A-Za-z0-9_]{3,31}$/.test(v);
+    }
+    return isValidUaMobile(v); // 12 цифр + код мобільного оператора зі списку
+  }
+  // чи поле працює в режимі username (без маски телефону)
+  isUsernameMode() {
+    return (this.state.a.q7 || "tg") === "tg" && (this.state.tgMode || "phone") === "username";
+  }
+
+  // Показ/зняття помилки поля контакту без повного ререндеру (для живої валідації).
+  _showContactError(msg) {
+    const r = this.root;
+    const field = r.querySelector(".wdq-field");
+    if (field) field.classList.add("wdq-field--err");
+    const inp = r.querySelector(".wdq-field input");
+    if (inp) { inp.setAttribute("aria-invalid", "true"); inp.setAttribute("aria-describedby", "wdq-err"); }
+    let el = r.querySelector("#wdq-err");
+    if (!el) {
+      el = document.createElement("p");
+      el.id = "wdq-err"; el.className = "wdq-err-msg"; el.setAttribute("role", "alert");
+      const block = r.querySelector(".wdq-contact-block");
+      const hp = r.querySelector(".wdq-hp");
+      if (block) block.insertBefore(el, hp ? hp.nextSibling : (field ? field.nextSibling : null));
+    }
+    el.textContent = msg;
+  }
+  _clearContactError() {
+    const r = this.root;
+    const field = r.querySelector(".wdq-field"); if (field) field.classList.remove("wdq-field--err");
+    const el = r.querySelector("#wdq-err"); if (el) el.remove();
+    const inp = r.querySelector(".wdq-field input"); if (inp) { inp.removeAttribute("aria-invalid"); inp.removeAttribute("aria-describedby"); }
   }
 
   async submit() {
@@ -481,7 +559,8 @@ class WDQuiz {
     html += this.renderHeader(v, isStart, isDone);
 
     // scroll area
-    html += `<div class="wdq-scroll">`;
+    const scrollCls = this.animate ? `wdq-scroll wdq-animate wdq-dir-${this.dir || "fwd"}` : "wdq-scroll";
+    html += `<div class="${scrollCls}">`;
     if (isStart) html += this.renderStart(v);
     else if (step === "cases") html += this.renderCases(v);
     else if (step === "links") html += this.renderLinks(v);
@@ -494,6 +573,7 @@ class WDQuiz {
     html += this.renderFooter(v, isStart, isDone);
 
     this.root.innerHTML = html;
+    this.animate = false; // анімація спрацювала; наступні рендери без неї, поки не буде переходу
 
     // відновити значення текстових полів (не через HTML — безпечно)
     this.bind(v);
@@ -521,7 +601,7 @@ class WDQuiz {
 
     // mobile header
     let mhead = "";
-    if (isStart) {
+    if (isStart || isDone) {
       mhead = `<header class="wdq-head wdq-head--start"><div class="wdq-brand">${brand}</div></header>`;
     } else if (inFlow) {
       mhead = `<header class="wdq-head wdq-head--flow"><div class="wdq-prog">
@@ -733,9 +813,29 @@ class WDQuiz {
       <span class="wdq-summary-note">${esc(sc.desktopNote)}</span>
     </section>`;
 
-    const errMsg = this.serverErr || (v.chKey === "tg" ? C.contact.errors.tg : C.contact.errors.phone);
+    // Telegram: явний перемикач способу контакту (телефон / @username) замість «вгадування» за першим символом
+    const isTg = v.chKey === "tg";
+    const mode = isTg ? (this.state.tgMode || "phone") : "tel";
+    let fType = ch.type, fMode = ch.mode, fAuto = ch.auto, fPh = ch.ph, fLabel = ch.label;
+    if (isTg && mode === "username") { fType = "text"; fMode = "text"; fAuto = "username"; fPh = "@username"; fLabel = "Юзернейм у Telegram"; }
+    else if (isTg) { fType = "tel"; fMode = "tel"; fAuto = "tel"; fPh = "+380 __ ___ __ __"; fLabel = "Номер телефону"; }
+
+    const toggle = isTg ? `<div class="wdq-tgmode" role="group" aria-label="Як з вами звʼязатися в Telegram">
+      <button type="button" class="wdq-tgmode-btn" data-tgmode="phone" aria-pressed="${mode === "phone" ? "true" : "false"}">${icon("assets/icons/phone.svg")}Телефон</button>
+      <button type="button" class="wdq-tgmode-btn" data-tgmode="username" aria-pressed="${mode === "username" ? "true" : "false"}"><span class="wdq-tgmode-at">@</span>username</button>
+    </div>` : "";
+
+    let errMsg;
+    if (this.serverErr) errMsg = this.serverErr;
+    else if (isTg && mode === "username") errMsg = "Вкажіть коректний @username: 4–32 символи, латиниця, цифри або _";
+    else {
+      // телефонний режим: якщо код введено, але він невідомий — підказка про оператора; інакше — про повний номер
+      const d = normalizeUaDigits(this.state.contact);
+      errMsg = d.length >= 5 && !isKnownOperatorCode(d.slice(3, 5)) ? OP_HINT : C.contact.errors.phone;
+    }
     const err = v.err ? `<p class="wdq-err-msg" role="alert" id="wdq-err">${esc(errMsg)}</p>` : "";
-    const hint = ch.hint ? `<p class="wdq-contact-hint">${esc(ch.hint)}</p>` : "";
+    const showHint = isTg ? mode === "phone" : !!ch.hint;
+    const hint = showHint && ch.hint ? `<p class="wdq-contact-hint">${esc(ch.hint)}</p>` : "";
     const net = v.netError ? `<p class="wdq-neterr" role="alert">${esc(v.netError)}</p>` : "";
 
     // honeypot — приховане поле для ботів (люди його не бачать і не заповнюють)
@@ -743,10 +843,11 @@ class WDQuiz {
 
     const field = `<div class="wdq-contact-block">
       <h1>${esc(ch.title)}</h1>
-      <label class="wdq-contact-label" for="wdq-contact">${esc(ch.label)}</label>
+      ${toggle}
+      <label class="wdq-contact-label" for="wdq-contact">${esc(fLabel)}</label>
       <div class="wdq-field${v.err ? " wdq-field--err" : ""}">
         <span class="wdq-field-ic">${icon(ch.icon)}</span>
-        <input id="wdq-contact" type="${esc(ch.type)}" inputmode="${esc(ch.mode)}" autocomplete="${esc(ch.auto)}" placeholder="${esc(ch.ph)}" data-input="contact" data-focus-id="contact" ${v.err ? 'aria-invalid="true" aria-describedby="wdq-err"' : ""}>
+        <input id="wdq-contact" type="${esc(fType)}" inputmode="${esc(fMode)}" autocomplete="${esc(fAuto)}" placeholder="${esc(fPh)}" data-input="contact" data-focus-id="contact" ${v.err ? 'aria-invalid="true" aria-describedby="wdq-err"' : ""}>
       </div>
       ${honeypot}
       ${err}${hint}
@@ -801,6 +902,7 @@ class WDQuiz {
     else if (v.step === "q8") {
       label = v.submitting ? "" : C.contact.cta; note = C.contact.ctaNote; act = "submit"; disabled = v.submitting;
     } else if (v.isQ) {
+      label = "Далі";
       disabled = !v.answered;
       if (!v.answered) note = v.q.multi ? "Оберіть хоча б один варіант" : "Оберіть варіант відповіді";
     }
@@ -832,7 +934,7 @@ class WDQuiz {
         else if (act === "next") { this.next(); }
         else if (act === "back") { this.back(); }
         else if (act === "submit") { this.submit(); }
-        else if (act === "change-channel") { this.go("q7"); }
+        else if (act === "change-channel") { this.go("q7", "back"); }
         else if (act === "close") { if (this.onClose) this.onClose(); }
       });
     });
@@ -850,29 +952,47 @@ class WDQuiz {
       const ctaD = r.querySelector(".wdq-nav-d--links .wdq-cta-d");
       [ctaM, ctaD].forEach((b) => { if (b) b.childNodes[0].nodeValue = want; });
     });
+    // перемикач способу контакту в Telegram
+    r.querySelectorAll("[data-tgmode]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const m = btn.getAttribute("data-tgmode");
+        if ((this.state.tgMode || "phone") === m) return;
+        this.state.tgMode = m;
+        this.state.contact = m === "phone" ? "+380 " : "";
+        this.state.err = false; this.serverErr = null;
+        this.save();
+        this.render(); // той самий крок → без анімації
+        const inp = this.root.querySelector(".wdq-field input");
+        if (inp) setTimeout(() => { inp.focus(); if (inp.value) inp.setSelectionRange(inp.value.length, inp.value.length); }, 20);
+      });
+    });
+
     if (contact) {
       contact.addEventListener("input", (e) => {
         const el = e.target;
-        const ch = this.state.a.q7 || "tg";
         const raw = el.value;
-        const t = raw.trim();
-        const isHandle = ch === "tg" && t.length > 0 && !/^[+\d(]/.test(t);
-        const formatted = isHandle ? raw : t.length ? fmtPhone(raw) : "";
-        this.state.contact = formatted;
-        if (!isHandle && formatted !== raw) { el.value = formatted; el.setSelectionRange(formatted.length, formatted.length); }
+        if (this.isUsernameMode()) {
+          this.state.contact = raw; // username — без маски
+        } else {
+          const t = raw.trim();
+          const formatted = t.length ? fmtPhone(raw) : "";
+          this.state.contact = formatted;
+          if (formatted !== raw) { el.value = formatted; el.setSelectionRange(formatted.length, formatted.length); }
+        }
         this.save();
-        // зняти помилку під час введення
-        if (this.state.err) {
-          this.state.err = false;
-          this.serverErr = null;
-          const field = r.querySelector(".wdq-field"); if (field) field.classList.remove("wdq-field--err");
-          const msg = r.querySelector("#wdq-err"); if (msg) msg.remove();
-          el.removeAttribute("aria-invalid"); el.removeAttribute("aria-describedby");
+        this.state.err = false;
+        this.serverErr = null;
+        // жива валідація коду оператора (лише телефонний режим)
+        if (!this.isUsernameMode()) {
+          const d = normalizeUaDigits(this.state.contact);
+          if (d.length >= 5 && !isKnownOperatorCode(d.slice(3, 5))) this._showContactError(OP_HINT);
+          else this._clearContactError();
+        } else {
+          this._clearContactError();
         }
       });
       contact.addEventListener("focus", (e) => {
-        const ch = this.state.a.q7 || "tg";
-        if (!e.target.value && ch !== "tg") { e.target.value = "+380 "; this.state.contact = "+380 "; this.save(); }
+        if (!e.target.value && !this.isUsernameMode()) { e.target.value = "+380 "; this.state.contact = "+380 "; this.save(); }
       });
     }
 

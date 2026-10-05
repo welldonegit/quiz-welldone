@@ -51,7 +51,7 @@ export const CONTENT = {
     "ctaNote": "6 питань · близько 1 хвилини · безкоштовно",
     "desktopBadge": "Аудит + стратегія + медіаплан — безкоштовно",
     "photo": {
-      "src": "assets/images/team.jpg",
+      "src": "assets/images/main-team-1.jpg",
       "alt": "Команда well done на робочій зустрічі в офісі",
       "caption": "Команда well done — ваш позаштатний відділ маркетингу"
     },
@@ -495,8 +495,8 @@ export const CONTENT = {
           },
           {
             "name": "ЖК «Янтарний»",
-            "img": "",
-            "ph": "Рендер ЖК «Янтарний»",
+            "img": "assets/images/amber.jpg",
+            "ph": "",
             "m1": "1 102",
             "m1l": "цільові заявки",
             "m2": "6 міс.",

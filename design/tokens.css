@@ -1,0 +1,67 @@
+/* well done quiz — design tokens
+   Взято з дизайн-системи сайту ads.well-done.com.ua (colors_and_type.css) + узгоджено в прототипі.
+   Якщо в проєкті вже підключено colors_and_type.css — використовуй його змінні, а тут лише мапінг. */
+
+:root {
+  /* Кольори */
+  --wdq-bg: #EEEEEE;            /* фон сторінки / квізу */
+  --wdq-card: #FFFFFF;          /* плитки, картки */
+  --wdq-ink: #1D1D1B;           /* основний текст, темні кнопки, обведення вибраного */
+  --wdq-text-2: #3D3D3A;        /* текст коментаря експерта */
+  --wdq-text-3: #4A4A45;        /* допоміжний текст */
+  --wdq-muted: #5E5E58;         /* підписи, підказки (контраст ≥ 4.5:1 на #EEE) */
+  --wdq-yellow: #F2EFA3;        /* фірмовий акцент: вибрана відповідь, маркер, текст на темній кнопці */
+  --wdq-line: rgba(29, 29, 27, 0.09);
+  --wdq-line-strong: rgba(29, 29, 27, 0.16);
+  --wdq-icon-bg: rgba(29, 29, 27, 0.05);
+  --wdq-disabled-bg: #D9D9D4;
+  --wdq-disabled-fg: #6B6B66;
+  --wdq-error: #770D0D;
+  --wdq-field-bg: #F6F6F4;
+
+  /* Типографіка — ОДИН шрифт */
+  --wdq-font: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+  /* ваги: 400 текст · 500 відповіді · 600 кнопки/назви · 700 заголовки · 800 великі цифри кейсів */
+  --wdq-h1-m: 700 25px/1.15 var(--wdq-font);   /* заголовок питання, mobile */
+  --wdq-h1-d: 700 34px/1.12 var(--wdq-font);   /* заголовок питання, desktop */
+  --wdq-hero-m: 700 30px/1.1 var(--wdq-font);
+  --wdq-hero-d: 700 52px/1.05 var(--wdq-font);
+  --wdq-tracking-tight: -0.03em;               /* для всіх заголовків і великих цифр */
+
+  /* Радіуси */
+  --wdq-r-block: 24px;   /* великі плитки, картки кейсів */
+  --wdq-r-card: 20px;    /* картки відповідей, коментар експерта */
+  --wdq-r-option: 18px;  /* рядкові відповіді */
+  --wdq-r-btn: 16px;     /* кнопки */
+  --wdq-r-icon: 12px;    /* підкладка іконки */
+  --wdq-r-pill: 100px;   /* чіпи */
+
+  /* Тіні — «жорсткі», як на сайті */
+  --wdq-shadow-selected: 3px 3px 0 #1D1D1B;   /* вибрана відповідь */
+  --wdq-shadow-cta: 4px 4px 0 #F2EFA3;        /* основна темна кнопка, темні картки */
+
+  /* Відступи */
+  --wdq-gutter-m: 16px;
+  --wdq-gutter-d: 32px;
+  --wdq-gap: 12px;
+  --wdq-tap: 44px;        /* мінімальна зона натискання */
+  --wdq-btn-h-m: 58px;
+  --wdq-btn-h-d: 56px;
+
+  /* Анімації */
+  --wdq-ease: cubic-bezier(.2, .7, .2, 1);
+  --wdq-dur: 150ms;              /* hover/selected */
+  --wdq-screen-in: 350ms;        /* поява екрана: opacity 0→1, translateY 10px→0 */
+  --wdq-auto-advance: 380ms;     /* затримка автопереходу після вибору */
+}
+
+/* Стани картки відповіді */
+/* default : background #FFF; border 1.5px solid var(--wdq-line)
+   hover   : translateY(-1px) (desktop -2px)
+   selected: background var(--wdq-yellow); border-color var(--wdq-ink); box-shadow var(--wdq-shadow-selected)
+   focus-visible: outline 2px solid var(--wdq-ink); outline-offset 3px
+   індикатор: 22px; radio = коло, multi = квадрат r7; selected = заливка #1D1D1B + галочка #F2EFA3 */
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --wdq-dur: 0ms; --wdq-screen-in: 0ms; }
+}

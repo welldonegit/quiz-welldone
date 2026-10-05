@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<title>Квіз well done · десктоп</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.wdq-opt{transition:background .15s ease,box-shadow .15s ease,border-color .15s ease,transform .15s ease}
+.wdq-opt:hover{transform:translateY(-2px)}
+.wdq-opt:active{transform:translateY(1px)}
+.wdq-opt:focus-visible,.wdq-btn:focus-visible,.wdq-link:focus-visible{outline:2px solid #1D1D1B;outline-offset:3px}
+.wdq-btn{transition:transform .15s ease,box-shadow .15s ease}
+.wdq-btn:hover{transform:translateY(-1px)}
+.wdq-scr{animation:wdqRise .35s ease both}
+.wdq-input::placeholder{color:#8A8A84}
+@keyframes wdqRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; display: flex; flex-direction: column; background: #EEEEEE; font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif; color: #1D1D1B; overflow: hidden">
+
+<header style="display: flex; align-items: center; gap: 24px; margin: 16px 32px 0; padding: 12px 12px 12px 24px; background: #FFFFFF; border-radius: 20px; border: 1px solid rgba(29,29,27,0.09); height: 44px">
+<div style="display: flex; align-items: center; gap: 12px; width: 300px">
+<img src="../assets/logo.svg" alt="well done" style="height: 18px; width: auto">
+<span style="width: 1px; height: 18px; background: rgba(29,29,27,0.16)"></span>
+<span style="font-size: 13px; color: #5E5E58">маркетингова агенція</span>
+</div>
+<div style="flex-grow: 1; display: flex; justify-content: center">
+<sc-if value="{{inFlow}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 14px; width: 440px">
+<span style="font-size: 13px; font-weight: 600; white-space: nowrap">{{stepLabel}}</span>
+<div style="display: flex; gap: 4px; flex-grow: 1">
+<sc-for list="{{segs}}" as="sg" hint-placeholder-count="8"><span style="flex-grow: 1; height: 6px; border-radius: 6px; {{sg.st}}"></span></sc-for>
+</div>
+<span style="font-size: 12px; color: #5E5E58; white-space: nowrap">{{stepNote}}</span>
+</div>
+</sc-if>
+</div>
+<div style="width: 300px; display: flex; justify-content: flex-end; align-items: center; gap: 10px">
+<span style="font-size: 13px; color: #5E5E58">Безкоштовно · близько 1 хвилини</span>
+<span style="font-size: 12px; font-weight: 600; background: #F2EFA3; padding: 8px 12px; border-radius: 12px">6 питань</span>
+</div>
+</header>
+
+<div ref="{{scrollRef}}" style="flex-grow: 1; overflow-y: auto; padding: 12px 32px 32px">
+
+<sc-if value="{{isStart}}" hint-placeholder-val="{{ true }}">
+<div class="wdq-scr" style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; height: 676px">
+<section style="grid-column: span 7; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 48px; display: flex; flex-direction: column; gap: 22px">
+<span style="align-self: flex-start; font-size: 13px; font-weight: 600; background: #F2EFA3; padding: 7px 12px; border-radius: 100px">Аудит + стратегія + медіаплан — безкоштовно</span>
+<h1 style="margin: 0; font-size: 52px; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em">Комплексний маркетинг для бізнесу з <span style="background: #F2EFA3; padding: 0 8px; border-radius: 12px; -webkit-box-decoration-break: clone; box-decoration-break: clone">гарантією результату</span></h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.45; color: #4A4A45">Дайте відповідь на 6 коротких питань та отримайте:</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+<li style="display: flex; gap: 12px; align-items: center; font-size: 17px; font-weight: 500"><span style="width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; background: #1D1D1B; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Безкоштовний аудит рекламних кампаній</li>
+<li style="display: flex; gap: 12px; align-items: center; font-size: 17px; font-weight: 500"><span style="width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; background: #1D1D1B; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Нову стратегію просування та медіаплан</li>
+<li style="display: flex; gap: 12px; align-items: center; font-size: 17px; font-weight: 500"><span style="width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; background: #1D1D1B; display: flex; align-items: center; justify-content: center"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>Персоналізовану комерційну пропозицію</li>
+</ul>
+<div style="display: flex; align-items: center; gap: 18px; margin-top: auto">
+<button type="button" class="wdq-btn" onClick="{{onCta}}" style="height: 64px; padding: 0 30px; border: 0; border-radius: 16px; background: #1D1D1B; color: #F2EFA3; font-family: inherit; font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: 4px 4px 0 #F2EFA3">Знайти можливості для росту<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+<span style="font-size: 13px; line-height: 1.4; color: #5E5E58">6 питань · близько 1 хвилини<br>без реєстрації</span>
+</div>
+</section>
+<div style="grid-column: span 5; display: flex; flex-direction: column; gap: 12px">
+<figure style="margin: 0; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 6px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1">
+<img src="../assets/images/team.jpg" alt="Команда well done на робочій зустрічі в офісі" style="width: 100%; height: 506px; object-fit: cover; border-radius: 19px; display: block">
+<figcaption style="font-size: 13px; color: #5E5E58; padding: 0 12px 6px">Команда well done — ваш позаштатний відділ маркетингу</figcaption>
+</figure>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<div style="background: #FFFFFF; border-radius: 20px; border: 1px solid rgba(29,29,27,0.09); padding: 16px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 28px; font-weight: 700; letter-spacing: -0.04em">10 років</span><span style="font-size: 13px; color: #5E5E58">на ринку digital</span></div>
+<div style="background: #FFFFFF; border-radius: 20px; border: 1px solid rgba(29,29,27,0.09); padding: 16px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 28px; font-weight: 700; letter-spacing: -0.04em">500+</span><span style="font-size: 13px; color: #5E5E58">проєктів у різних сферах</span></div>
+<div style="background: #1D1D1B; border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 4px; box-shadow: 4px 4px 0 #F2EFA3"><span style="font-size: 28px; font-weight: 700; letter-spacing: -0.04em; color: #F2EFA3">20 міс.</span><span style="font-size: 13px; color: #D9D9D4">середня співпраця</span></div>
+</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isQ}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; gap: 12px; min-height: 676px">
+<section style="flex-grow: 1; min-width: 0; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 36px 40px 28px; display: flex; flex-direction: column; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 34px; line-height: 1.12; font-weight: 700; letter-spacing: -0.035em; max-width: 720px">{{q.t1}}<span style="{{q.hlSt}}">{{q.hl}}</span>{{q.t2}}</h1>
+<p style="margin: 0; font-size: 14px; color: #5E5E58">{{q.hint}}</p>
+</div>
+
+<sc-if value="{{lyGrid}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="6">
+<button type="button" class="wdq-opt" onClick="{{o.onClick}}" aria-pressed="{{o.pressed}}" style="position: relative; display: flex; flex-direction: column; gap: 12px; padding: 8px 8px 16px; border-radius: 22px; border: 1.5px solid; text-align: left; cursor: pointer; font-family: inherit; color: #1D1D1B; {{o.st}}">
+<span style="height: 104px; border-radius: 16px; background: rgba(29,29,27,0.05); display: flex; align-items: center; justify-content: center"><img src="{{o.icon}}" alt="" style="width: 48px; height: 48px"></span>
+<span style="font-size: 16px; line-height: 1.3; font-weight: 600; padding: 0 8px">{{o.label}}</span>
+<span style="position: absolute; top: 16px; right: 16px; width: 22px; height: 22px; border: 1.5px solid; display: flex; align-items: center; justify-content: center; box-sizing: border-box; {{o.indSt}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="{{o.chkSt}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{showOther}}" hint-placeholder-val="{{ false }}">
+<div class="wdq-scr" style="display: flex; align-items: center; gap: 16px; background: #FFFFFF; border-radius: 18px; border: 1.5px solid #1D1D1B; padding: 14px 18px">
+<label for="wdq-other-d" style="font-size: 14px; font-weight: 600; white-space: nowrap">Вкажіть вашу сферу:</label>
+<input id="wdq-other-d" class="wdq-input" type="text" placeholder="Наприклад: медицина, освіта, HoReCa" value="{{otherText}}" onChange="{{onOther}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 17px; font-weight: 500; color: #1D1D1B">
+</div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{lyList}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; gap: 10px; {{listCols}}">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="6">
+<button type="button" class="wdq-opt" onClick="{{o.onClick}}" aria-pressed="{{o.pressed}}" style="display: flex; align-items: center; gap: 14px; width: 100%; min-height: 64px; padding: 10px 18px 10px 12px; border-radius: 18px; border: 1.5px solid; text-align: left; cursor: pointer; font-family: inherit; color: #1D1D1B; {{o.st}}">
+<sc-if value="{{o.hasIcon}}" hint-placeholder-val="{{ true }}"><span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: rgba(29,29,27,0.05); display: flex; align-items: center; justify-content: center"><img src="{{o.icon}}" alt="" style="width: 26px; height: 26px"></span></sc-if>
+<span style="flex-grow: 1; font-size: 16px; line-height: 1.3; font-weight: 500; padding-left: 6px">{{o.label}}</span>
+<span style="width: 22px; height: 22px; flex-shrink: 0; border: 1.5px solid; display: flex; align-items: center; justify-content: center; box-sizing: border-box; {{o.indSt}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="{{o.chkSt}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{lyTiles}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="8">
+<button type="button" class="wdq-opt" onClick="{{o.onClick}}" aria-pressed="{{o.pressed}}" style="display: flex; flex-direction: column; gap: 14px; min-height: 142px; padding: 14px; border-radius: 20px; border: 1.5px solid; text-align: left; cursor: pointer; font-family: inherit; color: #1D1D1B; {{o.st}}">
+<span style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%">
+<span style="width: 44px; height: 44px; border-radius: 12px; background: rgba(29,29,27,0.05); display: flex; align-items: center; justify-content: center"><img src="{{o.icon}}" alt="" style="width: 26px; height: 26px"></span>
+<span style="width: 22px; height: 22px; border: 1.5px solid; display: flex; align-items: center; justify-content: center; box-sizing: border-box; {{o.indSt}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="{{o.chkSt}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+</span>
+<span style="font-size: 15px; line-height: 1.3; font-weight: 600">{{o.label}}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{lySum}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+<button type="button" class="wdq-opt" onClick="{{o.onClick}}" aria-pressed="{{o.pressed}}" style="position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; min-height: 170px; padding: 18px; border-radius: 22px; border: 1.5px solid; text-align: left; cursor: pointer; font-family: inherit; color: #1D1D1B; {{o.st}}">
+<span style="position: absolute; top: 16px; right: 16px; width: 22px; height: 22px; border: 1.5px solid; display: flex; align-items: center; justify-content: center; box-sizing: border-box; {{o.indSt}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="{{o.chkSt}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<span style="display: flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums">
+<span style="line-height: 1.1; letter-spacing: -0.035em; {{o.loSt}}">{{o.lo}}</span>
+<span style="font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.035em">{{o.hi}}</span>
+</span>
+<span style="font-size: 13px; color: #5E5E58">на місяць</span>
+</button>
+</sc-for>
+</div>
+<p style="margin: 0; display: flex; gap: 8px; align-items: center; font-size: 14px; color: #4A4A45"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="1.8" stroke-linecap="round" style="flex-shrink: 0"><circle cx="12" cy="12" r="9.5"></circle><path d="M12 11v6M12 7.5h.01"></path></svg>Це бюджет рекламних платформ (Meta, Google). Послуги команди оплачуються окремо.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{lyChannel}}" hint-placeholder-val="{{ false }}">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+<button type="button" class="wdq-opt" onClick="{{o.onClick}}" aria-pressed="{{o.pressed}}" style="position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 18px; min-height: 170px; justify-content: space-between; border-radius: 22px; border: 1.5px solid; text-align: left; cursor: pointer; font-family: inherit; color: #1D1D1B; {{o.st}}">
+<span style="width: 56px; height: 56px; border-radius: 50%; background: rgba(29,29,27,0.06); display: flex; align-items: center; justify-content: center"><img src="{{o.icon}}" alt="" style="width: 30px; height: 30px"></span>
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 18px; font-weight: 600">{{o.label}}</span><span style="font-size: 13px; color: #5E5E58">{{o.sub}}</span></span>
+<span style="position: absolute; top: 16px; right: 16px; width: 22px; height: 22px; border: 1.5px solid; display: flex; align-items: center; justify-content: center; box-sizing: border-box; {{o.indSt}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="{{o.chkSt}}"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 8px">
+<button type="button" class="wdq-link" onClick="{{onBack}}" style="height: 52px; padding: 0 18px 0 12px; border-radius: 14px; border: 1px solid rgba(29,29,27,0.12); background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 500; color: #1D1D1B; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>Назад</button>
+<sc-if value="{{showFooter}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 16px">
+<sc-if value="{{hasCtaNote}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #5E5E58">{{ctaNote}}</span></sc-if>
+<button type="button" class="wdq-btn" onClick="{{onCta}}" disabled="{{ctaDisabled}}" style="height: 56px; padding: 0 28px; border: 0; border-radius: 16px; font-family: inherit; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; cursor: pointer; {{ctaSt}}">{{ctaLabel}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</sc-if>
+</div>
+</section>
+
+<aside style="width: 372px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{isQ6}}" hint-placeholder-val="{{ false }}">
+<section style="background: #1D1D1B; color: #FFFFFF; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 4px 4px 0 #F2EFA3">
+<span style="font-size: 16px; font-weight: 600">Що входить в аудит</span>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px">
+<li style="display: flex; gap: 10px; align-items: center; font-size: 14px; color: #EDEDE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Стратегія просування</li>
+<li style="display: flex; gap: 10px; align-items: center; font-size: 14px; color: #EDEDE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Структура рекламних кампаній</li>
+<li style="display: flex; gap: 10px; align-items: center; font-size: 14px; color: #EDEDE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Аудиторії й таргетинг</li>
+<li style="display: flex; gap: 10px; align-items: center; font-size: 14px; color: #EDEDE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Креативи та оффери</li>
+<li style="display: flex; gap: 10px; align-items: center; font-size: 14px; color: #EDEDE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Посадкові сторінки</li>
+<li style="display: flex; gap: 10px; align-items: center; font-size: 14px; color: #EDEDE8"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F2EFA3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Налаштування аналітики та пікселів</li>
+</ul>
+<div style="display: flex; gap: 10px; align-items: center; background: #F2EFA3; color: #1D1D1B; border-radius: 14px; padding: 12px 14px; font-size: 14px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"></path><path d="M9 4v14M15 6v14"></path></svg>План покращень із пріоритетами</div>
+</section>
+</sc-if>
+<div style="background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 14px">
+<img src="../assets/images/oleh.jpg" alt="Олег Федоришин" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Олег Федоришин</span><span style="font-size: 13px; color: #5E5E58">Засновник well done</span></div>
+</div>
+<sc-if value="{{hasPersona}}" hint-placeholder-val="{{ false }}"><span style="align-self: flex-start; font-size: 12px; font-weight: 600; background: #F2EFA3; padding: 5px 10px; border-radius: 100px">{{persona}}</span></sc-if>
+<p style="margin: 0; font-size: 15px; line-height: 1.55; color: #3D3D3A">{{comment}}</p>
+</div>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{isCases}}" hint-placeholder-val="{{ false }}">
+<div class="wdq-scr" style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; padding: 8px 4px 4px">
+<h1 style="margin: 0; font-size: 34px; line-height: 1.1; font-weight: 700; letter-spacing: -0.035em; max-width: 640px">{{cs.title}}</h1>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #4A4A45; max-width: 460px">{{cs.text}}</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+<article style="background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); overflow: hidden; display: flex; flex-direction: column">
+<sc-if value="{{c.hasImg}}" hint-placeholder-val="{{ true }}"><img src="{{c.img}}" alt="{{c.name}}" style="width: 100%; height: 170px; object-fit: cover; display: block"></sc-if>
+<sc-if value="{{c.noImg}}" hint-placeholder-val="{{ false }}"><div style="height: 170px; background: repeating-linear-gradient(135deg, #F4F4F2 0 10px, #ECECE8 10px 20px); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #5E5E58">[{{c.ph}}]</div></sc-if>
+<div style="padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 14px">
+<span style="font-size: 16px; font-weight: 600">{{c.name}}</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 32px; font-weight: 800; letter-spacing: -0.045em; line-height: 1">{{c.m1}}</span><span style="font-size: 13px; color: #5E5E58">{{c.m1l}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 32px; font-weight: 800; letter-spacing: -0.045em; line-height: 1">{{c.m2}}</span><span style="font-size: 13px; color: #5E5E58">{{c.m2l}}</span></div>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; color: #4A4A45; border-top: 1px solid rgba(29,29,27,0.09); padding-top: 12px">{{c.note}}</p>
+</div>
+</article>
+</sc-for>
+</div>
+<div style="display: flex; gap: 12px">
+<div style="flex-grow: 1; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 18px 20px; display: flex; gap: 16px; align-items: flex-start">
+<img src="../assets/images/oleh.jpg" alt="Олег Федоришин" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0">
+<div style="display: flex; flex-direction: column; gap: 6px"><span style="font-size: 14px; font-weight: 600">Олег Федоришин <span style="font-weight: 400; color: #5E5E58">· Засновник well done</span></span><p style="margin: 0; font-size: 14px; line-height: 1.5; color: #3D3D3A">{{comment}}</p></div>
+</div>
+<div style="width: 440px; flex-shrink: 0; background: #F2EFA3; border-radius: 24px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; justify-content: space-between">
+<p style="margin: 0; font-size: 14px; line-height: 1.45; font-weight: 500">Хочете зрозуміти, якого результату можна досягти у вашому проєкті? Розкажіть трохи більше про поточну ситуацію, щоб ми запропонували наступні кроки.</p>
+<div style="display: flex; gap: 10px">
+<button type="button" class="wdq-btn" onClick="{{onBack}}" aria-label="Назад" style="width: 54px; height: 54px; flex-shrink: 0; border-radius: 16px; border: 1.5px solid rgba(29,29,27,0.2); background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></button>
+<button type="button" class="wdq-btn" onClick="{{onCta}}" style="flex-grow: 1; height: 54px; border: 0; border-radius: 16px; background: #1D1D1B; color: #F2EFA3; font-family: inherit; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer">Наступний крок<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isLinks}}" hint-placeholder-val="{{ false }}">
+<div class="wdq-scr" style="display: flex; gap: 12px; min-height: 676px">
+<section style="flex-grow: 1; min-width: 0; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 36px 40px 28px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 34px; line-height: 1.12; font-weight: 700; letter-spacing: -0.035em">Залиште посилання на ресурси компанії</h1>
+<p style="margin: 0; font-size: 14px; color: #5E5E58">Сайт, соцмережі, портфоліо тощо — можна кілька, кожне з нового рядка</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px; background: #FFFFFF; border-radius: 20px; border: 1.5px solid #1D1D1B; padding: 16px">
+<label for="wdq-links-d" style="display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600"><span style="width: 40px; height: 40px; border-radius: 50%; background: #F2EFA3; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13.5a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"></path><path d="M14 10.5a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"></path></svg></span>Посилання на сайт, соцмережі, портфоліо</label>
+<textarea id="wdq-links-d" class="wdq-input" rows="5" placeholder="yoursite.com.ua&#10;instagram.com/yourbrand&#10;facebook.com/yourbrand" value="{{links}}" onChange="{{onLinks}}" style="border: 0; outline: none; resize: none; background: #F6F6F4; border-radius: 14px; padding: 14px 16px; font-family: inherit; font-size: 17px; line-height: 1.5; color: #1D1D1B"></textarea>
+</div>
+<p style="margin: 0; display: flex; gap: 8px; align-items: center; font-size: 14px; color: #4A4A45"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="1.8" stroke-linecap="round" style="flex-shrink: 0"><circle cx="12" cy="12" r="9.5"></circle><path d="M12 11v6M12 7.5h.01"></path></svg>Ще немає сайту чи сторінок? Просто натисніть «Пропустити».</p>
+<div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 8px">
+<button type="button" class="wdq-link" onClick="{{onBack}}" style="height: 52px; padding: 0 18px 0 12px; border-radius: 14px; border: 1px solid rgba(29,29,27,0.12); background: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 500; color: #1D1D1B; display: flex; align-items: center; gap: 6px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>Назад</button>
+<button type="button" class="wdq-btn" onClick="{{onCta}}" style="height: 56px; padding: 0 28px; border: 0; border-radius: 16px; background: #1D1D1B; color: #F2EFA3; box-shadow: 4px 4px 0 #F2EFA3; font-family: inherit; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; cursor: pointer">{{ctaLabel}}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</section>
+<aside style="width: 372px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 14px">
+<img src="../assets/images/oleh.jpg" alt="Олег Федоришин" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Олег Федоришин</span><span style="font-size: 13px; color: #5E5E58">Засновник well done</span></div>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.55; color: #3D3D3A">{{comment}}</p>
+</div>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{isContact}}" hint-placeholder-val="{{ false }}">
+<div class="wdq-scr" style="display: flex; gap: 12px; min-height: 676px">
+<section style="flex-grow: 1; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 44px 48px 36px; display: flex; flex-direction: column; gap: 16px">
+<h1 style="margin: 0; font-size: 38px; line-height: 1.1; font-weight: 700; letter-spacing: -0.035em">{{ct.title}}</h1>
+<label for="wdq-contact-d" style="font-size: 14px; font-weight: 500; color: #4A4A45; margin-top: 8px">{{ct.label}}</label>
+<div style="display: flex; align-items: center; gap: 14px; height: 76px; max-width: 560px; padding: 0 20px 0 12px; background: #FFFFFF; border-radius: 20px; border: 1.5px solid; {{fieldSt}}">
+<span style="width: 52px; height: 52px; border-radius: 50%; background: #F2EFA3; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><img src="{{ct.icon}}" alt="{{ct.name}}" style="width: 28px; height: 28px"></span>
+<input id="wdq-contact-d" class="wdq-input" type="{{ct.type}}" inputMode="{{ct.mode}}" autoComplete="{{ct.auto}}" placeholder="{{ct.ph}}" value="{{contact}}" onChange="{{onContact}}" onFocus="{{onContactFocus}}" style="flex-grow: 1; min-width: 0; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 22px; font-weight: 500; color: #1D1D1B">
+</div>
+<sc-if value="{{err}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 14px; color: #770D0D">{{errText}}</p></sc-if>
+<sc-if value="{{ct.hasHint}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 14px; line-height: 1.45; color: #4A4A45; max-width: 560px">{{ct.hint}}</p></sc-if>
+<button type="button" class="wdq-link" onClick="{{onChangeChannel}}" style="align-self: flex-start; background: none; border: 0; padding: 4px 0; font-family: inherit; font-size: 14px; font-weight: 600; color: #1D1D1B; text-decoration: underline; text-underline-offset: 4px; cursor: pointer">Змінити спосіб зв’язку</button>
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+<div style="display: flex; gap: 12px">
+<button type="button" class="wdq-btn" onClick="{{onBack}}" aria-label="Назад" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 16px; border: 1.5px solid rgba(29,29,27,0.2); background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></button>
+<button type="button" class="wdq-btn" onClick="{{onCta}}" style="height: 64px; padding: 0 34px; border: 0; border-radius: 16px; background: #1D1D1B; color: #F2EFA3; font-family: inherit; font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: 4px 4px 0 #F2EFA3">Надіслати заявку<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+<span style="font-size: 13px; color: #5E5E58">Без спаму: контакт потрібен лише для зв’язку щодо вашого запиту</span>
+</div>
+</section>
+<aside style="width: 372px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px">
+<section style="background: #1D1D1B; color: #FFFFFF; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 4px 4px 0 #F2EFA3">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; font-weight: 600">Ваш персональний розбір</span><span style="font-size: 14px; font-weight: 700; color: #F2EFA3">90%</span></div>
+<div style="height: 7px; border-radius: 7px; background: rgba(255,255,255,0.14); overflow: hidden"><div style="width: 90%; height: 100%; background: #F2EFA3; border-radius: 7px"></div></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{summary}}" as="sm" hint-placeholder-count="4"><span style="font-size: 12px; padding: 6px 10px; border-radius: 100px; background: rgba(255,255,255,0.1); color: #EDEDE8">{{sm.label}}</span></sc-for>
+</div>
+<span style="font-size: 13px; color: #D9D9D4; line-height: 1.45">Залишився один крок — контакт, щоб надіслати вам результат.</span>
+</section>
+<div style="background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 14px">
+<img src="../assets/images/oleh.jpg" alt="Олег Федоришин" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Олег Федоришин</span><span style="font-size: 13px; color: #5E5E58">Засновник well done</span></div>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.55; color: #3D3D3A">{{comment}}</p>
+</div>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div class="wdq-scr" style="display: flex; gap: 12px; min-height: 676px">
+<section style="flex-grow: 1; background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 48px; display: flex; flex-direction: column; gap: 20px; align-items: flex-start">
+<span style="width: 72px; height: 72px; border-radius: 50%; background: #F2EFA3; display: flex; align-items: center; justify-content: center; box-shadow: 4px 4px 0 #1D1D1B"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1D1D1B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<h1 style="margin: 0; font-size: 46px; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em">Дякуємо! Заявку отримано</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.5; color: #3D3D3A; max-width: 560px">{{doneText}}</p>
+<div style="display: flex; align-items: center; gap: 12px">
+<img src="../assets/images/oleh.jpg" alt="Олег Федоришин" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover">
+<span style="font-size: 14px; color: #4A4A45"><b style="color: #1D1D1B; font-weight: 600">Олег Федоришин</b> вже переглядає ваші відповіді</span>
+</div>
+<div style="margin-top: auto; background: #F2EFA3; border-radius: 20px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; align-self: stretch">
+<span style="font-size: 13px; font-weight: 600">Ваші відповіді</span>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{summary}}" as="sm" hint-placeholder-count="4"><span style="font-size: 13px; padding: 6px 12px; border-radius: 100px; background: rgba(255,255,255,0.7)">{{sm.label}}</span></sc-for>
+</div>
+</div>
+</section>
+<aside style="width: 440px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px">
+<section style="background: #FFFFFF; border-radius: 24px; border: 1px solid rgba(29,29,27,0.09); padding: 28px; display: flex; flex-direction: column; gap: 18px; flex-grow: 1">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.02em">Що буде далі</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 18px">
+<li style="display: flex; gap: 14px"><span style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #1D1D1B; color: #F2EFA3; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">1</span><span style="display: flex; flex-direction: column; gap: 3px"><b style="font-size: 15px; font-weight: 600">Знайомство</b><span style="font-size: 14px; line-height: 1.45; color: #4A4A45">Уточнимо задачі та погодимо доступ до рекламного кабінету.</span></span></li>
+<li style="display: flex; gap: 14px"><span style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #1D1D1B; color: #F2EFA3; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">2</span><span style="display: flex; flex-direction: column; gap: 3px"><b style="font-size: 15px; font-weight: 600">Аудит і стратегія</b><span style="font-size: 14px; line-height: 1.45; color: #4A4A45">Розберемо рекламу й підготуємо стратегію та медіаплан.</span></span></li>
+<li style="display: flex; gap: 14px"><span style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #1D1D1B; color: #F2EFA3; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center">3</span><span style="display: flex; flex-direction: column; gap: 3px"><b style="font-size: 15px; font-weight: 600">Пропозиція</b><span style="font-size: 14px; line-height: 1.45; color: #4A4A45">Покажемо окремо рекламні витрати й вартість нашої роботи.</span></span></li>
+</ol>
+</section>
+<a href="https://ads.well-done.com.ua/" class="wdq-btn" style="display: flex; align-items: center; justify-content: center; gap: 10px; height: 60px; border-radius: 18px; background: #1D1D1B; color: #F2EFA3; font-size: 16px; font-weight: 600; text-decoration: none">Поки чекаєте — 56 кейсів well done<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+</aside>
+</div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startStep":{"editor":"enum","options":["start","q1","cases","q2","q3","q4","q5","q6","q7","q8","done"],"default":"start"},"autoAdvance":{"editor":"boolean","default":true},"$preview":{"width":1280,"height":800}}'>
+var WDQ_DEVICE = 'd';
+var WDQ = (function () {
+  var IC = {
+    box: '../assets/icons/box.svg', briefcase: '../assets/icons/briefcase.svg', building: '../assets/icons/building.svg',
+    camera: '../assets/icons/camera.svg', cart: '../assets/icons/cart.svg', chart: '../assets/icons/chart.svg',
+    dots: '../assets/icons/dots.svg', factory: '../assets/icons/factory.svg', google: '../assets/icons/google.svg',
+    help: '../assets/icons/help.svg', meta: '../assets/icons/meta.svg', money: '../assets/icons/money-fly.svg',
+    monitor: '../assets/icons/monitor.svg', phone: '../assets/icons/phone.svg', rocket: '../assets/icons/rocket.svg',
+    search: '../assets/icons/search.svg', social: '../assets/icons/social.svg', strategy: '../assets/icons/strategy.svg',
+    team: '../assets/icons/team.svg', telegram: '../assets/icons/telegram.svg', trend: '../assets/icons/trend-down.svg',
+    user: '../assets/icons/user.svg', viber: '../assets/icons/viber.svg', whatsapp: '../assets/icons/whatsapp.svg'
+  };
+  var IMG = {
+    plaza: '../assets/images/plaza.jpg', tapuli: '../assets/images/tapuli.jpg', pizza: '../assets/images/pizza.jpg',
+    vostok: '../assets/images/vostok.jpg', pure: '../assets/images/pure.jpg',
+    beauty: '../assets/images/beauty.jpg', papir: '../assets/images/papir.jpg', horeca: '../assets/images/horeca.jpg',
+    scand: '../assets/images/scand.jpg', unity: '../assets/images/unity.jpg', ukrtop: '../assets/images/ukrtop.jpg',
+    marymax: '../assets/images/marymax.jpg'
+  };
+  var ORDER = ['start', 'q1', 'cases', 'q2', 'q3', 'q4', 'q5', 'q6', 'links', 'q7', 'q8', 'done'];
+  var PN = { q1: 1, cases: 1, q2: 2, q3: 3, q4: 4, q5: 5, q6: 6, links: 7, q7: 8, q8: 9 };
+  var TOTAL = 9;
+  var SPH = { ecom: 'Інтернет-магазин / товари', realty: 'Нерухомість і будівництво', prod: 'Виробництво / дистрибуція', b2b: 'B2B', b2c: 'Сфера послуг', other: 'Інша сфера' };
+  var Q = {
+    q1: { multi: false, auto: true, layout: 'grid', t1: 'У якій сфері працює ваш бізнес?', hl: '', t2: '', hint: 'Оберіть один варіант',
+      comment: 'За 10 років ми працювали з понад 500 проєктами в різних сферах. Цей досвід допомагає підбирати рекламні інструменти та пропозиції з урахуванням того, як саме ваші клієнти приймають рішення про покупку.',
+      opts: [
+        { id: 'ecom', label: 'Інтернет-магазин або товари', icon: IC.box },
+        { id: 'realty', label: 'Нерухомість і будівництво', icon: IC.building },
+        { id: 'prod', label: 'Виробництво або дистрибуція', icon: IC.factory },
+        { id: 'b2b', label: 'Послуги і товари для бізнесу (B2B)', icon: IC.briefcase },
+        { id: 'b2c', label: 'Сфера послуг', icon: IC.user },
+        { id: 'other', label: 'Інша сфера', icon: IC.dots, custom: true }
+      ] },
+    q2: { multi: true, auto: false, layout: 'list', t1: 'Що зараз найбільше заважає збільшувати продажі?', hl: '', t2: '', hint: 'Можна обрати кілька варіантів',
+      comment: 'Ми оцінюємо весь шлях від оголошення до покупки: пропозицію, креативи, сайт та обробку заявок. Оберіть головну проблему, щоб на розборі зосередитися на тому, що найбільше впливає на ваші продажі.',
+      opts: [
+        { id: 'leads', label: 'Замало заявок і нових клієнтів', short: 'Мало заявок', icon: IC.trend },
+        { id: 'conv', label: 'Заявки є, але мало хто купує', short: 'Низька конверсія в покупку', icon: IC.cart },
+        { id: 'cac', label: 'Залучення клієнтів обходиться надто дорого', short: 'Дорогий клієнт', icon: IC.money },
+        { id: 'unstable', label: 'Продажі нестабільні: то густо, то пусто', short: 'Нестабільні продажі', icon: IC.chart },
+        { id: 'scale', label: 'Продажі є, хочемо збільшити їхній обсяг', short: 'Масштабування', icon: IC.rocket },
+        { id: 'unknown', label: 'Поки не розуміємо, що саме потрібно покращити', short: 'Пошук точок росту', icon: IC.search }
+      ] },
+    q3: { multi: false, auto: true, layout: 'list', t1: 'Хто зараз відповідає за рекламу вашого бізнесу?', hl: '', t2: '', hint: 'Оберіть один варіант',
+      comment: 'Клієнти працюють із нами в середньому понад 20 місяців. Починаємо з аналізу попереднього досвіду, а під час співпраці щотижня показуємо результати, щоб ви розуміли, що відбувається з рекламою.',
+      opts: [
+        { id: 'contractor', label: 'Працюємо з підрядником, але хочемо кращих результатів' },
+        { id: 'inhouse', label: 'Просуванням займається наша команда' },
+        { id: 'owner', label: 'Власник сам веде рекламу та маркетинг' },
+        { id: 'paused', label: 'Раніше запускали рекламу, зараз призупинили' },
+        { id: 'nosystem', label: 'Бізнес працює, але системного просування ще немає' },
+        { id: 'prelaunch', label: 'Лише готуємо бізнес до запуску' }
+      ] },
+    q4: { multi: true, auto: false, layout: 'tiles', t1: 'Які послуги вас цікавлять?', hl: '', t2: '', hint: 'Можна обрати кілька варіантів',
+      comment: 'У well done працюють 20 спеціалістів із маркетингу, реклами, контенту та дизайну. Під ваші завдання залучимо потрібних фахівців, а координувати співпрацю допоможе один акаунт-менеджер. Можна почати з окремої послуги.',
+      opts: [
+        { id: 'complex', label: 'Комплексне digital-просування бізнесу', icon: IC.team },
+        { id: 'meta', label: 'Таргетована реклама (Meta Ads)', icon: IC.meta },
+        { id: 'google', label: 'Контекстна реклама (Google Ads)', icon: IC.google },
+        { id: 'site', label: 'Розробка сайту / інтернет-магазину', icon: IC.monitor },
+        { id: 'smm', label: 'Ведення соцмереж (SMM)', icon: IC.social },
+        { id: 'content', label: 'Створення контенту та зйомки', icon: IC.camera },
+        { id: 'strategy', label: 'Розробка маркетингової стратегії', icon: IC.strategy },
+        { id: 'rec', label: 'Потрібна рекомендація, ще не визначилися', icon: IC.help }
+      ] },
+    q5: { multi: false, auto: true, layout: 'sum', t1: 'Який щомісячний рекламний бюджет ви готові розглядати?', hl: '', t2: '', hint: 'Оберіть один варіант',
+      comment: 'Під ваш бюджет сформуємо медіаплан із пріоритетними каналами та прогнозними показниками. Окремо покажемо рекламні витрати й вартість нашої роботи, щоб ви могли оцінити пропозицію до початку співпраці.',
+      opts: [
+        { id: 'lt1', lo: 'до', hi: '$1 000', word: true, label: 'до $1 000', full: 'до $1 000' },
+        { id: '1-3', lo: '$1 000 –', hi: '$3 000', label: '$1 000–3 000', full: '$1 000–3 000' },
+        { id: '3-10', lo: '$3 000 –', hi: '$10 000', label: '$3 000–10 000', full: '$3 000–10 000' },
+        { id: 'gt10', lo: 'понад', hi: '$10 000', word: true, label: 'понад $10 000', full: 'понад $10 000' }
+      ] },
+    q6: { multi: false, auto: true, layout: 'list', t1: 'Хочете отримати ', hl: 'безкоштовний', t2: ' аудит ваших рекламних кампаній?', hint: 'Оберіть один варіант',
+      comment: 'Під час аудиту проаналізуємо вашу стратегію, креативи, аудиторії та налаштування й запропонуємо кроки для покращення. Доступ до кабінету погодимо після знайомства.',
+      opts: [
+        { id: 'yes-run', label: 'Так, реклама працює, хочу зрозуміти, що можна покращити', short: 'Аудит чинної реклами' },
+        { id: 'yes-paused', label: 'Так, рекламу зупинили, хочу розібрати попередні результати', short: 'Розбір минулих кампаній' },
+        { id: 'new', label: 'Рекламу ще не запускали, потрібні рекомендації для старту', short: 'Рекомендації для старту' },
+        { id: 'talk', label: 'Спочатку хочу обговорити співпрацю', short: 'Обговорення співпраці' }
+      ] },
+    q7: { multi: false, auto: false, layout: 'channel', t1: 'Як із вами краще зв’язатися?', hl: '', t2: '', hint: 'Оберіть зручний канал — контакт вкажете на наступному кроці',
+      comment: 'Оберіть зручний спосіб зв’язку. Якщо виберете месенджер, спочатку напишемо туди. Так ви зможете обговорити завдання у зручному для вас форматі.',
+      opts: [
+        { id: 'tg', label: 'Telegram', sub: 'Напишемо в чат', icon: IC.telegram },
+        { id: 'viber', label: 'Viber', sub: 'Напишемо в чат', icon: IC.viber },
+        { id: 'wa', label: 'WhatsApp', sub: 'Напишемо в чат', icon: IC.whatsapp },
+        { id: 'call', label: 'Зателефонувати', sub: 'Дзвінок на ваш номер', icon: IC.phone }
+      ] }
+  };
+  var PH_NOTE = 'Номер телефону з кодом країни';
+  var CH = {
+    tg: { name: 'Telegram', title: 'Вкажіть ваш контакт у Telegram', label: 'Номер телефону або @username', ph: '+380 або @username', type: 'text', mode: 'text', auto: 'username', icon: IC.telegram, hint: 'Якщо пошук за номером обмежений, вкажіть @username, щоб ми могли вам написати.' },
+    viber: { name: 'Viber', title: 'Вкажіть ваш номер у Viber', label: PH_NOTE, ph: '+380 __ ___ __ __', type: 'tel', mode: 'tel', auto: 'tel', icon: IC.viber, hint: '' },
+    wa: { name: 'WhatsApp', title: 'Вкажіть ваш номер у WhatsApp', label: PH_NOTE, ph: '+380 __ ___ __ __', type: 'tel', mode: 'tel', auto: 'tel', icon: IC.whatsapp, hint: '' },
+    call: { name: 'телефон', title: 'На який номер вам зателефонувати?', label: PH_NOTE, ph: '+380 __ ___ __ __', type: 'tel', mode: 'tel', auto: 'tel', icon: IC.phone, hint: '' }
+  };
+  var PLAZA = { name: 'ЖК «Квартал Плаза»', img: IMG.plaza, m1: '7 000', m1l: 'заявок із реклами', m2: '≈ $5', m2l: 'за заявку', note: 'Починали з просування третьої секції. Зараз працюємо вже над дев’ятою.' };
+  var PIZZA = { name: 'Pizza Day', img: IMG.pizza, m1: '×2', m1l: 'зростання продажів', m2: '−35%', m2l: 'вартість клієнта', note: 'Комплексне digital-просування у 2024 році. ROAS 5,87.' };
+  var PURE = { name: 'Pure Nutrition, зоо-бренд', img: IMG.pure, m1: '6,65', m1l: 'ROAS', m2: '$5,15', m2l: 'за замовлення', note: 'Понад 253 покупки щомісяця з реклами.' };
+  var HORECA = { name: 'TOP HoReCa, товари для HoReCa', img: IMG.horeca, m1: 'до 500', m1l: 'цільових заявок на місяць', m2: '$0,85', m2l: 'за заявку', note: 'Вартість заявки знизили в 5 разів за допомогою таргетованої реклами.' };
+  var PAPIR = { name: 'Пошук персоналу для виробництва', img: IMG.papir, m1: '2 792', m1l: 'заявки за 5 місяців', m2: '$0,67', m2l: 'за заявку', note: 'Закрили понад 10 вакансій на виробництві через таргетовану рекламу.' };
+  var VOSTOK = { name: 'Vostok Gaz, мережа АЗС', img: IMG.vostok, m1: '889', m1l: 'заявок', m2: '610', m2l: 'реєстрацій у Telegram', note: '+8 407 підписників: маркетинг, що приводить клієнтів, партнерів і персонал.' };
+  var UNITY = { name: 'Unity Barbershop', img: IMG.unity, m1: '304', m1l: 'нових клієнти за 3 місяці', m2: '$2,50', m2l: 'за клієнта', note: 'ROAS 530% за перші три місяці таргетованої реклами.' };
+  var CASES_LINK = 'https://well-done.com.ua/cases/#tab4';
+  var CASES = {
+    prod: { title: 'Реалізували 50+ проєктів у виробництві та дистрибуції. Ось деякі з наших кейсів.',
+      text: 'Допомагаємо виробникам і дистриб’юторам знаходити оптових клієнтів, дилерів і навіть персонал. Подивіться, яких результатів досягли наші клієнти.',
+      comment: 'У виробництві та дистрибуції цикл угоди довший, тому рахуємо не кліки, а цільові заявки та їхню вартість. Під кожен продукт підбираємо канали й пропозицію для закупівельників.',
+      cards: [HORECA, PAPIR,
+        { name: 'UkrTopPlast, виробник кришок', img: IMG.ukrtop, m1: '7,2%', m1l: 'конверсія сайту', m2: 'B2B', m2l: 'оптові заявки', note: 'Створили сайт, який перетворює відвідувачів на оптових клієнтів.' }] },
+    b2b: { title: 'Реалізували 50+ проєктів для B2B. Ось деякі з наших кейсів.',
+      text: 'Допомагаємо компаніям, що продають товари та послуги бізнесу, отримувати цільові заявки від партнерів і клієнтів.',
+      comment: 'У B2B рішення ухвалює кілька людей, тому працюємо з усім шляхом клієнта: від першого контакту до заявки у відділ продажів.',
+      cards: [HORECA, VOSTOK, PAPIR] },
+    realty: { title: 'Реалізували 50+ проєктів у сфері нерухомості. Ось деякі з наших кейсів.',
+      text: 'Допомагаємо забудовникам залучати покупців і продавати об’єкти. Подивіться, яких результатів досягли наші клієнти завдяки спільній роботі.',
+      comment: 'У нерухомості працюємо з усім шляхом покупця: від першого оголошення до звернення у відділ продажів. Тестуємо пропозиції, креативи та посадкові сторінки, щоб знаходити поєднання, які приводять зацікавлених клієнтів.',
+      cards: [PLAZA,
+        { name: 'Котеджне містечко «Скандинавія»', img: IMG.scand, ph: '', m1: '12 з 12', m1l: 'будинків продано', m2: '$380', m2l: 'реклами на проданий котедж', note: 'За рік залучили понад 800 заявок від потенційних покупців.' },
+        { name: 'ЖК «Янтарний»', img: '', ph: 'Рендер ЖК «Янтарний»', m1: '1 102', m1l: 'цільові заявки', m2: '6 міс.', m2l: 'термін роботи', note: 'Підбирали рекламні рішення під конкретний об’єкт, його пропозицію та потенційних покупців.' }] },
+    ecom: { title: 'Реалізували 50+ проєктів для інтернет-магазинів і товарних брендів. Ось деякі з наших кейсів.',
+      text: 'Допомагаємо брендам знижувати вартість продажу й збільшувати окупність реклами. Подивіться, яких результатів досягли наші клієнти.',
+      comment: 'В e-commerce рахуємо не кліки, а продажі та окупність: налаштовуємо каталоги, ремаркетинг і аналітику, щоб реклама працювала на повторні покупки.',
+      cards: [
+        { name: 'Tapuli, жіноче взуття', img: IMG.tapuli, m1: '$4,93', m1l: 'вартість продажу', m2: '20 000+', m2l: 'підписників', note: 'Понад 12 000 листувань на рік завдяки таргетованій рекламі.' },
+        { name: 'The Beauty Room, преміум-косметика', img: IMG.beauty, m1: '25 819', m1l: 'продажів за 1,5 року', m2: '35,67', m2l: 'ROAS', note: 'Вартість продажу — $1,98.' },
+        PURE] },
+    b2c: { title: 'Реалізували 50+ проєктів у сфері послуг. Ось деякі з наших кейсів.',
+      text: 'Приводимо клієнтів у заклади, сервіси та студії. Подивіться, яких результатів досягли наші клієнти завдяки спільній роботі.',
+      comment: 'Для сервісного бізнесу важливо, щоб реклама приводила людей, які справді прийдуть і куплять. Тому тестуємо пропозиції та рахуємо вартість клієнта, а не лише заявки.',
+      cards: [PIZZA, UNITY, VOSTOK] },
+    mix: { title: 'Реалізували 500+ проєктів у різних сферах. Ось деякі з наших кейсів.',
+      text: 'Понад 500 проєктів — від забудовників до інтернет-магазинів і сервісного бізнесу. Ось кілька результатів наших клієнтів.',
+      comment: 'Незалежно від сфери починаємо з того, як ваші клієнти ухвалюють рішення про покупку. Під це підбираємо канали, пропозиції та креативи.',
+      cards: [PLAZA, PIZZA, PURE] }
+  };
+  var DEMO = { q1: 'realty', q2: ['leads', 'cac'], q3: 'contractor', q4: ['meta', 'google', 'smm'], q5: '3-10', q6: 'yes-run', q7: 'tg' };
+  var LINKS_COMMENT = 'Подивимося на ваш сайт, соцмережі та рекламу ще до розмови. Так перша зустріч буде предметною, а рекомендації — конкретними для вашого бізнесу.';
+  function find(q, id) { var o = Q[q].opts.filter(function (x) { return x.id === id; })[0]; return o || null; }
+  function fmtPhone(v) {
+    var d = String(v || '').replace(/\D/g, '');
+    if (d.indexOf('380') !== 0) {
+      if (d.indexOf('80') === 0) d = '3' + d;
+      else if (d.indexOf('0') === 0) d = '38' + d;
+      else if ('380'.indexOf(d) === 0) d = '380';
+      else d = '380' + d;
+    }
+    d = d.slice(3, 12);
+    var out = '+380';
+    if (d.length) out += ' ' + d.slice(0, 2);
+    if (d.length > 2) out += ' ' + d.slice(2, 5);
+    if (d.length > 5) out += ' ' + d.slice(5, 7);
+    if (d.length > 7) out += ' ' + d.slice(7, 9);
+    return d.length ? out : '+380 ';
+  }
+  return { IC: IC, ORDER: ORDER, PN: PN, TOTAL: TOTAL, SPH: SPH, Q: Q, CH: CH, CASES: CASES, CASES_LINK: CASES_LINK, DEMO: DEMO, LINKS_COMMENT: LINKS_COMMENT, find: find, fmtPhone: fmtPhone };
+})();
+
+class Component extends DCLogic {
+  state = this.initState();
+
+  initState() {
+    var start = (this.props && this.props.startStep) || 'start';
+    var a = { q2: [], q4: [] };
+    var idx = WDQ.ORDER.indexOf(start);
+    if (idx < 0) { start = 'start'; idx = 0; }
+    Object.keys(WDQ.DEMO).forEach(function (k) {
+      var ki = WDQ.ORDER.indexOf(k);
+      if (ki < idx || (ki === idx && (k === 'q2' || k === 'q4'))) a[k] = Array.isArray(WDQ.DEMO[k]) ? WDQ.DEMO[k].slice() : WDQ.DEMO[k];
+    });
+    var linksDemo = idx > WDQ.ORDER.indexOf('links') ? 'yoursite.com.ua' : '';
+    return { step: start, a: a, contact: start === 'done' ? '@username' : '', links: linksDemo, otherText: '', err: false, caseIdx: 0 };
+  }
+
+  componentWillUnmount() { clearTimeout(this.t); }
+
+  go(step) {
+    clearTimeout(this.t);
+    var patch = { step: step, err: false, caseIdx: 0 };
+    var ch = this.state.a.q7 || 'tg';
+    if (step === 'q8' && ch !== 'tg' && !(this.state.contact || '').replace(/\D/g, '').length) patch.contact = '+380 ';
+    if (step === 'q8' && ch !== 'tg' && /^@/.test(this.state.contact || '')) patch.contact = '+380 ';
+    this.setState(patch);
+    if (this.sc) this.sc.scrollTop = 0;
+  }
+  setContact(v) {
+    var ch = this.state.a.q7 || 'tg';
+    var raw = String(v || '');
+    var t = raw.trim();
+    var isHandle = ch === 'tg' && t.length > 0 && !/^[+\d(]/.test(t);
+    this.setState({ contact: isHandle ? raw : (t.length ? WDQ.fmtPhone(raw) : ''), err: false });
+  }
+  next() { var i = WDQ.ORDER.indexOf(this.state.step); if (i < WDQ.ORDER.length - 1) this.go(WDQ.ORDER[i + 1]); }
+  back() { var i = WDQ.ORDER.indexOf(this.state.step); if (i > 0) this.go(WDQ.ORDER[i - 1]); }
+
+  pick(qid, oid) {
+    var q = WDQ.Q[qid];
+    var a = Object.assign({}, this.state.a);
+    if (q.multi) {
+      var cur = (a[qid] || []).slice();
+      if (oid === 'rec') { cur = cur.indexOf('rec') >= 0 ? [] : ['rec']; }
+      else {
+        cur = cur.filter(function (x) { return x !== 'rec'; });
+        var k = cur.indexOf(oid);
+        if (k >= 0) cur.splice(k, 1); else cur.push(oid);
+      }
+      a[qid] = cur;
+      this.setState({ a: a });
+    } else {
+      a[qid] = oid;
+      this.setState({ a: a });
+      var opt = WDQ.find(qid, oid);
+      if (q.auto && !(opt && opt.custom) && this.props.autoAdvance !== false) {
+        clearTimeout(this.t);
+        var self = this;
+        this.t = setTimeout(function () { self.next(); }, 380);
+      }
+    }
+  }
+
+  valid() {
+    var v = (this.state.contact || '').trim();
+    var ch = this.state.a.q7 || 'tg';
+    if (ch === 'tg' && /^@?[A-Za-z][A-Za-z0-9_]{3,31}$/.test(v)) return true;
+    return v.replace(/\D/g, '').length === 12;
+  }
+  submit() { if (this.valid()) this.go('done'); else this.setState({ err: true }); }
+
+  renderVals() {
+    var self = this;
+    var s = this.state || this.initState();
+    var step = s.step, a = s.a;
+    var q = WDQ.Q[step] || null;
+    var isQ = !!q;
+    var answered = q ? (q.multi ? (a[step] || []).length > 0 : !!a[step]) : false;
+
+    var opts = q ? q.opts.map(function (o) {
+      var on = q.multi ? (a[step] || []).indexOf(o.id) >= 0 : a[step] === o.id;
+      var st = on
+        ? 'background: #F2EFA3; border-color: #1D1D1B; border-style: solid; box-shadow: 3px 3px 0 #1D1D1B;'
+        : 'background: #FFFFFF; border-color: rgba(29,29,27,0.09); border-style: solid; box-shadow: none;';
+      var ind = (q.multi ? 'border-radius: 7px;' : 'border-radius: 50%;') +
+        (on ? ' background: #1D1D1B; border-color: #1D1D1B;' : ' background: #FFFFFF; border-color: rgba(29,29,27,0.28);');
+      return {
+        id: o.id, label: o.label, sub: o.sub || '', pre: o.pre || '', icon: o.icon || '', hasIcon: !!o.icon,
+        lo: o.lo || '', hi: o.hi || '',
+        loSt: o.word ? 'font-size: 16px; font-weight: 500; color: #5E5E58;' : 'font-size: 28px; font-weight: 700;',
+        on: on, pressed: on ? 'true' : 'false', st: st, indSt: ind, chkSt: on ? 'opacity: 1' : 'opacity: 0',
+        onClick: function () { self.pick(step, o.id); }
+      };
+    }) : [];
+
+    var n = WDQ.PN[step] || 0;
+    var segs = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (i) {
+      return { st: i <= n ? 'background: #1D1D1B;' : 'background: rgba(29,29,27,0.14);' };
+    });
+    var stepNote = step === 'cases' ? 'кейси у вашій сфері' : (n <= 6 ? (n === 6 ? 'останнє питання про бізнес' : 'ще ' + (6 - n) + ' пит. про бізнес') : (n === 7 ? 'ресурси компанії' : (n === 8 ? 'спосіб зв’язку' : 'останній крок')));
+
+    var sph = a.q1 || 'other';
+    var csKey = WDQ.CASES[sph] ? sph : 'mix';
+    var otherText = s.otherText || '';
+    var sphLabel = sph === 'other' && otherText.trim() ? otherText.trim() : WDQ.SPH[sph];
+    var cs = WDQ.CASES[csKey];
+    var cards = cs.cards.map(function (c) { return Object.assign({}, c, { hasImg: !!c.img, noImg: !c.img, ph: c.ph || '' }); });
+
+    var persona = '';
+    if (step === 'q2' && a.q1) persona = 'Ваша сфера: ' + sphLabel;
+    if (step === 'q3' && (a.q2 || []).length) { var p2 = WDQ.find('q2', a.q2[0]); persona = 'Фокус розбору: ' + (p2 ? p2.short : ''); }
+    if (step === 'q5' && (a.q4 || []).length) persona = a.q4[0] === 'rec' ? 'Підберемо набір послуг для вас' : 'Обрано напрямів: ' + a.q4.length;
+    if (step === 'q6' && a.q5) { var p5 = WDQ.find('q5', a.q5); persona = 'Медіаплан під ' + (p5 ? p5.full : '') + ' / міс'; }
+    if (step === 'q7' && a.q6) { var p6 = WDQ.find('q6', a.q6); persona = p6 ? p6.short : ''; }
+
+    var comment = q ? q.comment : (step === 'cases' ? cs.comment : step === 'links' ? WDQ.LINKS_COMMENT : (step === 'q8' ? 'Ваші відповіді допоможуть нам підготуватися до першої розмови. Залиште контакт, щоб ми обговорили ваші завдання та погодили наступні кроки.' : ''));
+
+    var summary = [];
+    if (a.q1) summary.push({ label: sphLabel });
+    if ((a.q2 || []).length) { var s2 = WDQ.find('q2', a.q2[0]); if (s2) summary.push({ label: s2.short }); }
+    if (a.q5) { var s5 = WDQ.find('q5', a.q5); if (s5) summary.push({ label: 'Бюджет ' + s5.full }); }
+    if ((a.q4 || []).length) summary.push({ label: a.q4[0] === 'rec' ? 'Послуги: потрібна рекомендація' : 'Послуг обрано: ' + a.q4.length });
+    if (a.q6) { var s6 = WDQ.find('q6', a.q6); if (s6) summary.push({ label: s6.short }); }
+
+    var chKey = a.q7 || 'tg';
+    var chd = WDQ.CH[chKey];
+    var ct = Object.assign({}, chd, { hasHint: !!chd.hint });
+    var doneText = chKey === 'call'
+      ? 'Зателефонуємо на ваш номер у робочий час, щоб обговорити задачі та погодити наступні кроки.'
+      : 'Спочатку напишемо вам у ' + chd.name + ' у робочий час, щоб обговорити задачі та погодити наступні кроки.';
+
+    var isStart = step === 'start', isCases = step === 'cases', isContact = step === 'q8', isDone = step === 'done', isLinks = step === 'links';
+    var hasLinks = !!(s.links || '').trim();
+    var ctaLabel = 'Далі', ctaNote = '', ctaDisabled = false, onCta = function () { self.next(); };
+    if (isContact) { ctaLabel = 'Надіслати заявку'; onCta = function () { self.submit(); }; }
+    else if (isLinks) { ctaLabel = hasLinks ? 'Далі' : 'Пропустити'; }
+    else if (isQ) { ctaDisabled = !answered; if (!answered) ctaNote = q.multi ? 'Оберіть хоча б один варіант' : 'Оберіть варіант відповіді'; }
+    var showFooter = isQ || isLinks;
+    if (hasLinks) summary.push({ label: 'Посилання додано' });
+
+    return {
+      isStart: isStart, inFlow: !isStart && !isDone, isQ: isQ, isCases: isCases, isContact: isContact, isDone: isDone, isLinks: isLinks,
+      showOther: step === 'q1' && a.q1 === 'other', otherText: otherText,
+      onOther: function (e) { self.setState({ otherText: e.target.value }); },
+      links: s.links || '', onLinks: function (e) { self.setState({ links: e.target.value }); },
+      onContactFocus: function () { if (!(self.state.contact || '').length && (self.state.a.q7 || 'tg') !== 'tg') self.setState({ contact: '+380 ' }); },
+      isQ3: step === 'q3', isQ6: step === 'q6',
+      lyGrid: isQ && q.layout === 'grid', lyList: isQ && q.layout === 'list', lyTiles: isQ && q.layout === 'tiles',
+      lySum: isQ && q.layout === 'sum', lyChannel: isQ && q.layout === 'channel',
+      listCols: step === 'q2' ? 'grid-template-columns: repeat(2, minmax(0, 1fr));' : 'grid-template-columns: repeat(1, minmax(0, 1fr)); max-width: 720px;',
+      q: q ? { t1: q.t1, hl: q.hl, t2: q.t2, hint: q.hint, hlSt: q.hl ? 'background: #F2EFA3; padding: 0 8px; border-radius: 10px; -webkit-box-decoration-break: clone; box-decoration-break: clone;' : '' } : { t1: '', hl: '', t2: '', hint: '', hlSt: '' },
+      opts: opts, segs: segs, stepLabel: 'Крок ' + (n || 1) + ' з ' + WDQ.TOTAL, stepNote: stepNote,
+      cs: cs, cards: cards,
+      persona: persona, hasPersona: !!persona, comment: comment,
+      summary: summary, ct: ct, contact: s.contact, doneText: doneText,
+      err: !!s.err, errText: chKey === 'tg' ? 'Вкажіть повний номер у форматі +380 XX XXX XX XX або @username' : 'Вкажіть повний номер у форматі +380 XX XXX XX XX',
+      fieldSt: s.err ? 'border-color: #770D0D;' : 'border-color: #1D1D1B;',
+      onContact: function (e) { self.setContact(e.target.value); },
+      onChangeChannel: function () { self.go('q7'); },
+      onBack: function () { self.back(); },
+      scrollRef: function (el) { self.sc = el; },
+      showFooter: showFooter, ctaLabel: ctaLabel, ctaNote: ctaNote, hasCtaNote: !!ctaNote, ctaDisabled: ctaDisabled, onCta: onCta,
+      ctaSt: ctaDisabled ? 'background: #D9D9D4; color: #6B6B66; cursor: not-allowed; box-shadow: none;' : 'background: #1D1D1B; color: #F2EFA3; box-shadow: 4px 4px 0 #F2EFA3;'
+    };
+  }
+}
+</script>
+</body>
+</html>

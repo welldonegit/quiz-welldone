@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Квіз well done — демо підключення</title>
+<meta name="description" content="Демо інтерактивного квіза well done: вбудована секція та повноекранна модалка.">
+
+<!-- Стилі квіза (включають @import ./fonts.css із self-hosted Inter, у т.ч. вага 600 з кирилицею) -->
+<link rel="stylesheet" href="./src/wd-quiz.css">
+
+<style>
+  /* Стилі лише демо-сторінки (не частина квіза) */
+  :root { --page-ink: #1D1D1B; --page-bg: #EEEEEE; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page-bg); color: var(--page-ink);
+    font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+  }
+  .demo-hero {
+    max-width: 920px; margin: 0 auto; padding: 48px 20px 8px; text-align: center;
+  }
+  .demo-hero h1 { font-size: 28px; letter-spacing: -0.03em; margin: 0 0 10px; }
+  .demo-hero p { color: #5E5E58; font-size: 15px; line-height: 1.5; margin: 0 auto 20px; max-width: 620px; }
+  .demo-open {
+    display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 26px; border: 0;
+    border-radius: 16px; background: #1D1D1B; color: #F2EFA3; font-size: 16px; font-weight: 600;
+    font-family: inherit; cursor: pointer; box-shadow: 4px 4px 0 #F2EFA3;
+  }
+  .demo-section { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; }
+  .demo-label { font-size: 13px; font-weight: 600; color: #5E5E58; margin: 32px 0 12px; text-transform: uppercase; letter-spacing: .04em; }
+</style>
+</head>
+<body>
+
+  <header class="demo-hero">
+    <h1>Квіз well done — демо підключення</h1>
+    <p>Нижче — квіз, вбудований у секцію сторінки (<code>&lt;div data-wd-quiz&gt;</code>).
+       Кнопка відкриває той самий квіз у повноекранній модалці (<code>data-wd-quiz-open</code>).</p>
+    <button type="button" class="demo-open" data-wd-quiz-open>
+      Пройти квіз у модалці
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </header>
+
+  <main class="demo-section">
+    <div class="demo-label">Вбудована секція</div>
+    <div data-wd-quiz></div>
+  </main>
+
+  <!-- Конфіг (необов’язково): можна задати submitUrl, debug тощо до підключення скрипта -->
+  <script>
+    window.WDQ_CONFIG = {
+      // submitUrl: "https://your-backend.example/api/quiz",  // бекенд-проксі, що пересилає заявку в Telegram
+      debug: true
+    };
+  </script>
+  <script type="module" src="./src/wd-quiz.js"></script>
+</body>
+</html>

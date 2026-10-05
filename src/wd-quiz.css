@@ -1,0 +1,802 @@
+/* well done quiz — продакшн-стилі.
+   Незалежний компонент: усі класи з префіксом .wdq-, стилі не залежать від глобальних стилів сайту
+   і не впливають на сторінку (все замкнено на .wdq). Токени — з design/tokens.css. */
+
+@import url("./fonts.css");
+
+/* ─────────────────────────  ТОКЕНИ  ───────────────────────── */
+.wdq {
+  --wdq-bg: #EEEEEE;
+  --wdq-card: #FFFFFF;
+  --wdq-ink: #1D1D1B;
+  --wdq-text-2: #3D3D3A;
+  --wdq-text-3: #4A4A45;
+  --wdq-muted: #5E5E58;
+  --wdq-yellow: #F2EFA3;
+  --wdq-line: rgba(29, 29, 27, 0.09);
+  --wdq-line-strong: rgba(29, 29, 27, 0.16);
+  --wdq-icon-bg: rgba(29, 29, 27, 0.05);
+  --wdq-disabled-bg: #D9D9D4;
+  --wdq-disabled-fg: #6B6B66;
+  --wdq-error: #770D0D;
+  --wdq-field-bg: #F6F6F4;
+
+  --wdq-font: "Inter", -apple-system, "Segoe UI", sans-serif;
+  --wdq-tight: -0.03em;
+
+  --wdq-r-block: 24px;
+  --wdq-r-card: 20px;
+  --wdq-r-option: 18px;
+  --wdq-r-btn: 16px;
+  --wdq-r-icon: 12px;
+  --wdq-r-pill: 100px;
+
+  --wdq-shadow-selected: 3px 3px 0 #1D1D1B;
+  --wdq-shadow-cta: 4px 4px 0 #F2EFA3;
+
+  --wdq-gutter: 16px;
+  --wdq-gap: 12px;
+  --wdq-ease: cubic-bezier(.2, .7, .2, 1);
+  --wdq-dur: 150ms;
+  --wdq-screen-in: 350ms;
+}
+
+/* ─────────────────────────  БАЗА / СКИДАННЯ (локальне)  ───────────────────────── */
+.wdq, .wdq * { box-sizing: border-box; }
+.wdq {
+  font-family: var(--wdq-font);
+  color: var(--wdq-ink);
+  background: var(--wdq-bg);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: 100%;
+}
+.wdq h1, .wdq h2, .wdq p, .wdq ul, .wdq ol, .wdq figure { margin: 0; }
+.wdq ul, .wdq ol { padding: 0; list-style: none; }
+.wdq button { font-family: inherit; }
+.wdq img { max-width: 100%; }
+.wdq svg { flex-shrink: 0; }
+/* Розміри інлайн-іконок, що не мають власних width/height */
+.wdq-cta svg, .wdq-cta-go svg, .wdq-start-cta svg, .wdq-submit-d svg { width: 20px; height: 20px; }
+.wdq-cta-d svg, .wdq-caseslink svg, .wdq-back-d svg { width: 18px; height: 18px; }
+.wdq-back svg, .wdq-modal-close svg { width: 22px; height: 22px; }
+.wdq-field-ic svg { width: 24px; height: 24px; }
+.wdq-links-ic svg { width: 16px; height: 16px; }
+.wdq-audit-hl svg { width: 18px; height: 18px; }
+.wdq-change svg { width: 16px; height: 16px; }
+.wdq *:focus { outline: none; }
+.wdq *:focus-visible { outline: 2px solid var(--wdq-ink); outline-offset: 3px; border-radius: 4px; }
+
+/* ─────────────────────────  КАРКАС (embedded + modal)  ───────────────────────── */
+.wdq {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+/* Вбудована секція. Висоту можна перевизначити змінною --wdq-embed-h. */
+.wdq--embed {
+  border-radius: var(--wdq-r-block);
+  height: var(--wdq-embed-h, 100dvh);
+  max-height: var(--wdq-embed-h, 844px);
+}
+/* Повноекранне модальне вікно */
+.wdq-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: var(--wdq-bg);
+  display: none;
+}
+.wdq-modal[data-open="true"] { display: block; }
+.wdq-modal .wdq {
+  height: 100%;
+  height: 100dvh;
+}
+.wdq-modal-close {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  right: 16px;
+  z-index: 5;
+  width: 44px; height: 44px;
+  border: 1px solid var(--wdq-line-strong);
+  background: var(--wdq-card);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; padding: 0; color: var(--wdq-ink);
+  transition: transform var(--wdq-dur) var(--wdq-ease);
+}
+.wdq-modal-close:hover { transform: translateY(-1px); }
+.wdq-body-lock { overflow: hidden !important; }
+
+/* ─────────────────────────  HEADER / ПРОГРЕС  ───────────────────────── */
+.wdq-head { flex-shrink: 0; }
+.wdq-head--start { display: flex; align-items: center; padding: 14px 16px 10px; }
+.wdq-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--wdq-card);
+  border-radius: var(--wdq-r-btn); border: 1px solid var(--wdq-line);
+  flex-grow: 1;
+}
+.wdq-brand img { height: 16px; width: auto; display: block; }
+.wdq-brand-sep { width: 1px; height: 16px; background: var(--wdq-line-strong); }
+.wdq-brand-note { font-size: 12px; color: var(--wdq-muted); }
+
+.wdq-head--flow { display: flex; align-items: center; gap: 12px; padding: 16px 20px 12px; }
+.wdq-prog { flex-grow: 1; display: flex; flex-direction: column; gap: 7px; }
+.wdq-prog-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.wdq-step-label { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.wdq-step-note { font-size: 12px; color: var(--wdq-muted); text-align: right; }
+.wdq-segs { display: flex; gap: 4px; }
+.wdq-seg { flex-grow: 1; height: 5px; border-radius: 5px; background: rgba(29,29,27,0.14); }
+.wdq-seg--on { background: var(--wdq-ink); }
+
+/* Десктопна шапка-плитка (приховано на mobile) */
+.wdq-head--desktop { display: none; }
+
+/* ─────────────────────────  СКРОЛ-ОБЛАСТЬ  ───────────────────────── */
+.wdq-scroll {
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px 16px 24px;
+  scrollbar-width: thin;
+}
+.wdq-scroll--pad { padding-bottom: 24px; }
+
+.wdq-scr { animation: wdqRise var(--wdq-screen-in) var(--wdq-ease) both; }
+@keyframes wdqRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ─────────────────────────  СТАРТ  ───────────────────────── */
+.wdq-start { display: flex; flex-direction: column; gap: 10px; }
+.wdq-start-card {
+  background: var(--wdq-card); border-radius: var(--wdq-r-block);
+  border: 1px solid var(--wdq-line); padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.wdq-badge-d { display: none; }
+.wdq-h1 {
+  font-size: 30px; line-height: 1.1; font-weight: 700; letter-spacing: -0.035em;
+}
+.wdq-mark {
+  background: var(--wdq-yellow); padding: 0 5px; border-radius: 8px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.wdq-lead { font-size: 15px; line-height: 1.45; color: var(--wdq-text-3); }
+.wdq-bullets { display: flex; flex-direction: column; gap: 10px; }
+.wdq-bullets li {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 15px; line-height: 1.35; font-weight: 500;
+}
+.wdq-check {
+  width: 22px; height: 22px; flex-shrink: 0; border-radius: 50%;
+  background: var(--wdq-ink); display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+.wdq-fig {
+  background: var(--wdq-card); border-radius: var(--wdq-r-block);
+  border: 1px solid var(--wdq-line); padding: 6px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.wdq-fig img { width: 100%; height: 170px; object-fit: cover; border-radius: 19px; display: block; }
+.wdq-fig figcaption { font-size: 12px; color: var(--wdq-muted); padding: 0 10px 6px; }
+.wdq-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.wdq-stat {
+  background: var(--wdq-card); border-radius: 18px; border: 1px solid var(--wdq-line);
+  padding: 12px; display: flex; flex-direction: column; gap: 2px;
+}
+.wdq-stat-v { font-size: 22px; font-weight: 700; letter-spacing: var(--wdq-tight); }
+.wdq-stat-l { font-size: 12px; color: var(--wdq-muted); line-height: 1.3; }
+.wdq-stat--accent { background: var(--wdq-ink); border: 0; box-shadow: 3px 3px 0 var(--wdq-yellow); }
+.wdq-stat--accent .wdq-stat-v { color: var(--wdq-yellow); }
+.wdq-stat--accent .wdq-stat-l { color: var(--wdq-disabled-bg); }
+.wdq-start-ctarow { display: none; }
+
+/* ─────────────────────────  ПИТАННЯ (загальне)  ───────────────────────── */
+.wdq-flow { display: flex; flex-direction: column; gap: 16px; }
+.wdq-panel { display: flex; flex-direction: column; gap: 16px; }
+.wdq-contact-block { display: flex; flex-direction: column; gap: 12px; }
+.wdq-contact-nav { display: none; }       /* на mobile дію виконує липкий футер */
+.wdq-cases-foot { display: none; }        /* desktop-версія підвалу кейсів */
+.wdq-summary.wdq-summary--d { display: none; }   /* summary у правій колонці — лише desktop */
+.wdq-answers.wdq-answers--d { display: none; }   /* answers у картці подяки — лише desktop */
+.wdq-qhead { display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 0; }
+.wdq-qhead h1 { font-size: 25px; line-height: 1.15; font-weight: 700; letter-spacing: var(--wdq-tight); }
+.wdq-qhint { font-size: 13px; color: var(--wdq-muted); }
+.wdq-nav-d { display: none; }
+
+/* Варіанти — загальні стани */
+.wdq-opt {
+  position: relative; border: 1.5px solid var(--wdq-line); background: var(--wdq-card);
+  text-align: left; cursor: pointer; color: var(--wdq-ink);
+  transition: background var(--wdq-dur) var(--wdq-ease), box-shadow var(--wdq-dur) var(--wdq-ease),
+    border-color var(--wdq-dur) var(--wdq-ease), transform var(--wdq-dur) var(--wdq-ease);
+}
+.wdq-opt:hover { transform: translateY(-1px); }
+.wdq-opt:active { transform: translateY(1px); }
+.wdq-opt[aria-pressed="true"], .wdq-opt[aria-checked="true"] {
+  background: var(--wdq-yellow); border-color: var(--wdq-ink);
+  box-shadow: var(--wdq-shadow-selected);
+}
+.wdq-ind {
+  flex-shrink: 0; width: 22px; height: 22px; border: 1.5px solid rgba(29,29,27,0.28);
+  background: var(--wdq-card); display: flex; align-items: center; justify-content: center;
+  box-sizing: border-box;
+}
+.wdq-ind--radio { border-radius: 50%; }
+.wdq-ind--check { border-radius: 7px; }
+.wdq-opt[aria-pressed="true"] .wdq-ind, .wdq-opt[aria-checked="true"] .wdq-ind {
+  background: var(--wdq-ink); border-color: var(--wdq-ink);
+}
+.wdq-ind svg { opacity: 0; }
+.wdq-opt[aria-pressed="true"] .wdq-ind svg, .wdq-opt[aria-checked="true"] .wdq-ind svg { opacity: 1; }
+.wdq-ic { background: var(--wdq-icon-bg); display: flex; align-items: center; justify-content: center; color: var(--wdq-ink); }
+.wdq-ic svg { display: block; }
+
+/* layout: grid (q1) */
+.wdq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wdq-grid .wdq-opt {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 8px 8px 12px; border-radius: 20px;
+}
+.wdq-grid .wdq-ic { height: 78px; border-radius: 14px; }
+.wdq-grid .wdq-ic svg { width: 40px; height: 40px; }
+.wdq-grid .wdq-opt-label { font-size: 14px; line-height: 1.3; font-weight: 600; padding: 0 4px; min-height: 36px; }
+.wdq-grid .wdq-ind { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; }
+
+/* поле "інша сфера" */
+.wdq-other {
+  display: flex; flex-direction: column; gap: 8px; background: var(--wdq-card);
+  border-radius: 18px; border: 1.5px solid var(--wdq-ink); padding: 12px 14px;
+}
+.wdq-other label { font-size: 13px; font-weight: 600; }
+.wdq-field-bare {
+  border: 0; outline: none; background: transparent; font-family: inherit;
+  font-size: 16px; font-weight: 500; color: var(--wdq-ink); padding: 2px 0; width: 100%;
+}
+
+/* layout: list (q2, q3, q6) */
+.wdq-list { display: flex; flex-direction: column; gap: 8px; }
+.wdq-list .wdq-opt {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px;
+  padding: 10px 14px 10px 10px; border-radius: 18px;
+}
+.wdq-list .wdq-ic { width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; }
+.wdq-list .wdq-ic svg { width: 24px; height: 24px; }
+.wdq-list .wdq-opt-label { flex-grow: 1; font-size: 15px; line-height: 1.3; font-weight: 500; padding-left: 4px; }
+
+/* layout: tiles (q4) */
+.wdq-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.wdq-tiles .wdq-opt {
+  display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 18px;
+}
+.wdq-tiles-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+.wdq-tiles .wdq-ic { width: 38px; height: 38px; border-radius: 11px; }
+.wdq-tiles .wdq-ic svg { width: 24px; height: 24px; }
+.wdq-tiles .wdq-opt-label { font-size: 14px; line-height: 1.3; font-weight: 600; }
+
+/* layout: sum (q5) */
+.wdq-sumwrap { display: flex; flex-direction: column; gap: 10px; }
+.wdq-sum { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wdq-sum .wdq-opt {
+  display: flex; flex-direction: column; gap: 6px; min-height: 116px; justify-content: flex-end;
+  padding: 14px; border-radius: 20px;
+}
+.wdq-sum .wdq-ind { position: absolute; top: 12px; right: 12px; }
+.wdq-sum-nums { display: flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums; }
+.wdq-sum-lo { font-size: 23px; font-weight: 700; line-height: 1.1; letter-spacing: var(--wdq-tight); }
+.wdq-sum-lo--word { font-size: 15px; font-weight: 500; color: var(--wdq-muted); }
+.wdq-sum-hi { font-size: 23px; line-height: 1.1; font-weight: 700; letter-spacing: var(--wdq-tight); }
+.wdq-sum-per { font-size: 12px; color: var(--wdq-muted); }
+.wdq-note {
+  display: flex; gap: 8px; align-items: flex-start; font-size: 12px; line-height: 1.45;
+  color: var(--wdq-text-3); padding: 0 4px;
+}
+.wdq-note svg { flex-shrink: 0; margin-top: 1px; color: var(--wdq-ink); }
+
+/* layout: channel (q7) */
+.wdq-channel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wdq-channel .wdq-opt {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+  padding: 14px; border-radius: 20px;
+}
+.wdq-channel .wdq-ic { width: 48px; height: 48px; border-radius: 50%; background: rgba(29,29,27,0.06); }
+.wdq-channel .wdq-ic svg { width: 28px; height: 28px; }
+.wdq-ch-txt { display: flex; flex-direction: column; gap: 2px; }
+.wdq-ch-name { font-size: 16px; font-weight: 600; }
+.wdq-ch-sub { font-size: 12px; color: var(--wdq-muted); }
+.wdq-channel .wdq-ind { position: absolute; top: 12px; right: 12px; }
+
+/* картка "Що входить в аудит" */
+.wdq-audit {
+  background: var(--wdq-ink); color: #FFFFFF; border-radius: var(--wdq-r-card);
+  padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 3px 3px 0 var(--wdq-yellow);
+}
+.wdq-audit-title { font-size: 14px; font-weight: 600; }
+.wdq-audit ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 12px; }
+.wdq-audit li { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.35; color: #EDEDE8; }
+.wdq-audit li svg { flex-shrink: 0; margin-top: 1px; color: var(--wdq-yellow); }
+.wdq-audit-hl {
+  display: flex; gap: 10px; align-items: center; background: var(--wdq-yellow); color: var(--wdq-ink);
+  border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600;
+}
+.wdq-audit-hl svg { flex-shrink: 0; color: var(--wdq-ink); }
+
+/* картка експерта — CSS Grid (одна розмітка, два макети) */
+.wdq-expert {
+  background: var(--wdq-card); border-radius: var(--wdq-r-card); border: 1px solid var(--wdq-line);
+  padding: 14px; display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 6px; align-items: start;
+}
+.wdq-expert > .wdq-expert-av { grid-column: 1; grid-row: 1 / -1; align-self: start; }
+.wdq-expert > :not(.wdq-expert-av) { grid-column: 2; min-width: 0; }
+.wdq-expert-av { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.wdq-expert-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.wdq-expert-id { display: flex; flex-direction: column; }
+.wdq-expert-name { font-size: 14px; font-weight: 600; }
+.wdq-expert-role { font-size: 12px; color: var(--wdq-muted); }
+.wdq-chip {
+  align-self: flex-start; font-size: 12px; font-weight: 600; background: var(--wdq-yellow);
+  padding: 4px 9px; border-radius: var(--wdq-r-pill);
+}
+.wdq-expert-comment { font-size: 13.5px; line-height: 1.5; color: var(--wdq-text-2); }
+
+.wdq-aside { display: flex; flex-direction: column; gap: 12px; }
+
+/* ─────────────────────────  КЕЙСИ (1.1)  ───────────────────────── */
+.wdq-cases { display: flex; flex-direction: column; gap: 14px; }
+.wdq-cases-head { display: flex; flex-direction: column; gap: 8px; padding: 4px 4px 0; }
+.wdq-cases-head h1 { font-size: 24px; line-height: 1.15; font-weight: 700; letter-spacing: var(--wdq-tight); }
+.wdq-cases-head p { font-size: 14px; line-height: 1.5; color: var(--wdq-text-3); }
+.wdq-carousel {
+  display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+  margin: 0 -16px; padding: 2px 16px 6px; scrollbar-width: none;
+}
+.wdq-carousel::-webkit-scrollbar { display: none; }
+.wdq-case {
+  width: 300px; flex-shrink: 0; scroll-snap-align: start; background: var(--wdq-card);
+  border-radius: var(--wdq-r-block); border: 1px solid var(--wdq-line); overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.wdq-case-img { width: 100%; height: 150px; object-fit: cover; display: block; }
+.wdq-case-ph {
+  height: 150px;
+  background: repeating-linear-gradient(135deg, #F4F4F2 0 10px, #ECECE8 10px 20px);
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  font-size: 12px; color: var(--wdq-muted); padding: 0 20px;
+}
+.wdq-case-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.wdq-case-name { font-size: 15px; font-weight: 600; }
+.wdq-case-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wdq-metric { display: flex; flex-direction: column; gap: 2px; }
+.wdq-metric-v { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.wdq-metric-l { font-size: 12px; color: var(--wdq-muted); line-height: 1.3; }
+.wdq-case-note {
+  font-size: 13px; line-height: 1.45; color: var(--wdq-text-3);
+  border-top: 1px solid var(--wdq-line); padding-top: 10px;
+}
+.wdq-case-dots { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.wdq-dots { display: flex; gap: 5px; align-items: center; }
+.wdq-dot { height: 6px; width: 6px; border-radius: 6px; background: rgba(29,29,27,0.25); transition: width .2s var(--wdq-ease); }
+.wdq-dot--on { width: 18px; background: var(--wdq-ink); }
+.wdq-case-num { font-size: 12px; font-weight: 600; color: var(--wdq-text-3); }
+.wdq-cases-cta { font-size: 15px; line-height: 1.45; font-weight: 500; padding: 0 4px; }
+
+/* ─────────────────────────  ПОСИЛАННЯ (7)  ───────────────────────── */
+.wdq-links-field {
+  display: flex; flex-direction: column; gap: 10px; background: var(--wdq-card);
+  border-radius: 18px; border: 1.5px solid var(--wdq-ink); padding: 14px;
+}
+.wdq-links-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+.wdq-links-ic {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--wdq-yellow);
+  display: flex; align-items: center; justify-content: center; color: var(--wdq-ink); flex-shrink: 0;
+}
+.wdq-textarea {
+  border: 0; outline: none; resize: none; background: var(--wdq-field-bg); border-radius: 12px;
+  padding: 12px; font-family: inherit; font-size: 16px; line-height: 1.45; color: var(--wdq-ink); width: 100%;
+}
+
+/* ─────────────────────────  КОНТАКТ (8)  ───────────────────────── */
+.wdq-summary {
+  background: var(--wdq-ink); color: #FFFFFF; border-radius: var(--wdq-r-card);
+  padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 3px 3px 0 var(--wdq-yellow);
+}
+.wdq-summary-top { display: flex; justify-content: space-between; align-items: baseline; }
+.wdq-summary-title { font-size: 14px; font-weight: 600; }
+.wdq-summary-badge { font-size: 13px; font-weight: 700; color: var(--wdq-yellow); }
+.wdq-summary-bar { height: 6px; border-radius: 6px; background: rgba(255,255,255,0.14); overflow: hidden; }
+.wdq-summary-bar i { display: block; width: 90%; height: 100%; background: var(--wdq-yellow); border-radius: 6px; }
+.wdq-summary-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.wdq-summary-chips span { font-size: 12px; padding: 5px 10px; border-radius: var(--wdq-r-pill); background: rgba(255,255,255,0.1); color: #EDEDE8; }
+.wdq-summary-note { display: none; }
+
+.wdq-contact-block { display: flex; flex-direction: column; gap: 12px; }
+.wdq-contact-block h1 { font-size: 25px; line-height: 1.15; font-weight: 700; letter-spacing: var(--wdq-tight); padding: 0 4px; }
+.wdq-contact-label { font-size: 13px; font-weight: 500; color: var(--wdq-text-3); padding: 0 4px; }
+.wdq-field {
+  display: flex; align-items: center; gap: 12px; height: 64px; padding: 0 16px 0 10px;
+  background: var(--wdq-card); border-radius: 18px; border: 1.5px solid var(--wdq-ink);
+}
+.wdq-field--err { border-color: var(--wdq-error); }
+.wdq-field-ic {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--wdq-yellow);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--wdq-ink);
+}
+.wdq-field input {
+  flex-grow: 1; min-width: 0; border: 0; outline: none; background: transparent;
+  font-family: inherit; font-size: 18px; font-weight: 500; color: var(--wdq-ink);
+}
+.wdq-err-msg { font-size: 13px; color: var(--wdq-error); padding: 0 4px; }
+.wdq-contact-hint { font-size: 13px; line-height: 1.45; color: var(--wdq-text-3); padding: 0 4px; }
+.wdq-neterr {
+  font-size: 13px; line-height: 1.45; color: var(--wdq-error); padding: 10px 12px;
+  background: rgba(119,13,13,0.08); border-radius: 12px;
+}
+.wdq-change {
+  align-self: flex-start; background: none; border: 0; padding: 6px 4px; font-family: inherit;
+  font-size: 14px; font-weight: 600; color: var(--wdq-ink); text-decoration: underline;
+  text-underline-offset: 4px; cursor: pointer;
+}
+
+/* ─────────────────────────  ДЯКУЄМО  ───────────────────────── */
+.wdq-done { display: flex; flex-direction: column; gap: 14px; padding-top: 18px; }
+.wdq-done-aside { display: contents; } /* на mobile діти лягають у загальну колонку */
+.wdq-done-card {
+  background: var(--wdq-card); border-radius: var(--wdq-r-block); border: 1px solid var(--wdq-line);
+  padding: 24px 20px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start;
+}
+.wdq-done-badge {
+  width: 60px; height: 60px; border-radius: 50%; background: var(--wdq-yellow);
+  display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 var(--wdq-ink); color: var(--wdq-ink);
+}
+.wdq-done-card h1 { font-size: 28px; line-height: 1.1; font-weight: 700; letter-spacing: -0.035em; }
+.wdq-done-text { font-size: 15px; line-height: 1.5; color: var(--wdq-text-2); }
+.wdq-done-expert { display: flex; align-items: center; gap: 10px; padding-top: 4px; }
+.wdq-done-expert img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.wdq-done-expert span { font-size: 13px; color: var(--wdq-text-3); }
+.wdq-done-expert b { color: var(--wdq-ink); font-weight: 600; }
+.wdq-next {
+  background: var(--wdq-card); border-radius: var(--wdq-r-block); border: 1px solid var(--wdq-line);
+  padding: 20px; display: flex; flex-direction: column; gap: 14px;
+}
+.wdq-next h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+.wdq-next ol { display: flex; flex-direction: column; gap: 14px; }
+.wdq-next li { display: flex; gap: 12px; }
+.wdq-next-n {
+  width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: var(--wdq-ink);
+  color: var(--wdq-yellow); font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.wdq-next-txt { display: flex; flex-direction: column; gap: 2px; }
+.wdq-next-txt b { font-size: 14px; font-weight: 600; }
+.wdq-next-txt span { font-size: 13px; line-height: 1.45; color: var(--wdq-text-3); }
+.wdq-answers { background: var(--wdq-yellow); border-radius: var(--wdq-r-block); padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+.wdq-answers-title { font-size: 13px; font-weight: 600; }
+.wdq-answers-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.wdq-answers-chips span { font-size: 12px; padding: 5px 10px; border-radius: var(--wdq-r-pill); background: rgba(255,255,255,0.7); }
+.wdq-caseslink {
+  display: flex; align-items: center; justify-content: center; gap: 8px; height: 54px;
+  border-radius: var(--wdq-r-btn); background: var(--wdq-card); border: 1.5px solid var(--wdq-ink);
+  color: var(--wdq-ink); font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: transform var(--wdq-dur) var(--wdq-ease);
+}
+.wdq-caseslink:hover { transform: translateY(-1px); }
+
+/* ─────────────────────────  ЛИПКИЙ ФУТЕР (mobile)  ───────────────────────── */
+.wdq-footer {
+  flex-shrink: 0; padding: 12px 16px calc(18px + env(safe-area-inset-bottom));
+  background: var(--wdq-bg); border-top: 1px solid rgba(29,29,27,0.08);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.wdq-footer[hidden] { display: none; }
+.wdq-footer-row { display: flex; gap: 10px; }
+.wdq-back {
+  width: 58px; height: 58px; flex-shrink: 0; border-radius: var(--wdq-r-btn);
+  border: 1.5px solid var(--wdq-line-strong); background: var(--wdq-card);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; color: var(--wdq-ink);
+  transition: transform var(--wdq-dur) var(--wdq-ease);
+}
+.wdq-back:hover { transform: translateY(-1px); }
+.wdq-cta {
+  height: 58px; flex-grow: 1; min-width: 0; border: 0; border-radius: var(--wdq-r-btn);
+  font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+  background: var(--wdq-ink); color: var(--wdq-yellow); box-shadow: var(--wdq-shadow-cta);
+  transition: transform var(--wdq-dur) var(--wdq-ease), box-shadow var(--wdq-dur) var(--wdq-ease);
+}
+.wdq-cta:hover:not(:disabled) { transform: translateY(-1px); }
+.wdq-cta:disabled {
+  background: var(--wdq-disabled-bg); color: var(--wdq-disabled-fg);
+  cursor: not-allowed; box-shadow: none;
+}
+.wdq-cta-note { font-size: 12px; color: var(--wdq-muted); text-align: center; }
+.wdq-spinner {
+  width: 20px; height: 20px; border: 2.5px solid rgba(242,239,163,0.4);
+  border-top-color: var(--wdq-yellow); border-radius: 50%;
+  animation: wdqSpin .7s linear infinite;
+}
+@keyframes wdqSpin { to { transform: rotate(360deg); } }
+.wdq-sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+/* honeypot — прибрано з потоку й з-під екрана; не display:none (деякі боти його ігнорують) */
+.wdq-hp {
+  position: absolute !important; left: -9999px !important; top: auto;
+  width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;
+}
+
+/* ───────────────────────────────────────────────────────────────
+   ПЛАНШЕТ 768–1023: мобільний макет по центру, max-width 560px
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .wdq-scroll > .wdq-scr { max-width: 560px; margin: 0 auto; }
+  .wdq-footer-row, .wdq-cta-note { max-width: 560px; margin-left: auto; margin-right: auto; width: 100%; }
+}
+
+/* ───────────────────────────────────────────────────────────────
+   ДЕСКТОП ≥ 1024px
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .wdq-head--start, .wdq-head--flow { display: none; }
+  .wdq-head--desktop {
+    display: flex; align-items: center; gap: 24px; margin: 16px 32px 0;
+    padding: 12px 12px 12px 24px; background: var(--wdq-card); border-radius: var(--wdq-r-card);
+    border: 1px solid var(--wdq-line); min-height: 44px;
+  }
+  .wdq-dhead-brand { display: flex; align-items: center; gap: 12px; width: 300px; }
+  .wdq-dhead-brand img { height: 18px; width: auto; }
+  .wdq-dhead-brand .wdq-brand-sep { height: 18px; }
+  .wdq-dhead-brand .wdq-brand-note { font-size: 13px; }
+  .wdq-dhead-center { flex-grow: 1; display: flex; justify-content: center; }
+  .wdq-dhead-prog { display: flex; align-items: center; gap: 14px; width: 440px; }
+  .wdq-dhead-prog .wdq-step-label { font-size: 13px; }
+  .wdq-dhead-prog .wdq-segs { flex-grow: 1; }
+  .wdq-dhead-prog .wdq-seg { height: 6px; border-radius: 6px; }
+  .wdq-dhead-prog .wdq-step-note { font-size: 12px; white-space: nowrap; }
+  .wdq-dhead-right { width: 300px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+  .wdq-dhead-right .wdq-free { font-size: 13px; color: var(--wdq-muted); }
+  .wdq-dhead-right .wdq-6q { font-size: 12px; font-weight: 600; background: var(--wdq-yellow); padding: 8px 12px; border-radius: 12px; }
+
+  .wdq-scroll { padding: 12px 32px 32px; }
+  .wdq-scroll > .wdq-scr { max-width: none; margin: 0; }
+
+  /* СТАРТ — 12-колонкова сітка */
+  .wdq-start {
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px;
+    flex-direction: initial;
+  }
+  .wdq-start-card { grid-column: span 7; padding: 48px; gap: 22px; border-radius: var(--wdq-r-block); }
+  .wdq-badge-d {
+    display: inline-flex; align-self: flex-start; font-size: 13px; font-weight: 600;
+    background: var(--wdq-yellow); padding: 7px 12px; border-radius: var(--wdq-r-pill);
+  }
+  .wdq-start-card .wdq-h1 { font-size: 52px; line-height: 1.05; letter-spacing: -0.04em; }
+  .wdq-start-card .wdq-mark { padding: 0 8px; border-radius: 12px; }
+  .wdq-lead { font-size: 18px; }
+  .wdq-bullets { gap: 12px; }
+  .wdq-bullets li { font-size: 17px; align-items: center; }
+  .wdq-check { width: 26px; height: 26px; margin-top: 0; }
+  .wdq-check svg { width: 13px; height: 13px; }
+  .wdq-start-ctarow { display: flex; align-items: center; gap: 18px; margin-top: auto; }
+  .wdq-start-cta {
+    height: 64px; padding: 0 30px; border: 0; border-radius: var(--wdq-r-btn);
+    background: var(--wdq-ink); color: var(--wdq-yellow); font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: var(--wdq-shadow-cta);
+    transition: transform var(--wdq-dur) var(--wdq-ease);
+  }
+  .wdq-start-cta:hover { transform: translateY(-1px); }
+  .wdq-start-ctanote { font-size: 13px; line-height: 1.4; color: var(--wdq-muted); }
+  .wdq-start-right { grid-column: span 5; display: flex; flex-direction: column; gap: 12px; }
+  .wdq-start-right .wdq-fig { flex-grow: 1; border-radius: var(--wdq-r-block); }
+  .wdq-start-right .wdq-fig img { height: 100%; min-height: 460px; }
+  .wdq-start-right figcaption { font-size: 13px; padding: 0 12px 6px; }
+  .wdq-start-right .wdq-stats { gap: 12px; }
+  .wdq-stat { border-radius: var(--wdq-r-card); padding: 16px; gap: 4px; }
+  .wdq-stat-v { font-size: 28px; letter-spacing: -0.04em; }
+  .wdq-stat-l { font-size: 13px; }
+  .wdq-stat--accent { box-shadow: var(--wdq-shadow-cta); }
+  /* на десктопі CTA старту в тілі екрана, липкий футер ховаємо */
+
+  /* ПИТАННЯ — дві колонки */
+  .wdq-flow { flex-direction: row; display: flex; gap: 12px; align-items: stretch; min-height: 676px; }
+  .wdq-flow--full { flex-direction: column; }
+  .wdq-panel {
+    flex-grow: 1; min-width: 0; background: var(--wdq-card); border-radius: var(--wdq-r-block);
+    border: 1px solid var(--wdq-line); padding: 36px 40px 28px; display: flex; flex-direction: column; gap: 24px;
+  }
+  .wdq-qhead { padding: 0; gap: 8px; }
+  .wdq-qhead h1 { font-size: 34px; line-height: 1.12; letter-spacing: -0.035em; max-width: 720px; }
+  .wdq-qhint { font-size: 14px; }
+
+  .wdq-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .wdq-grid .wdq-opt { padding: 8px 8px 16px; border-radius: 22px; gap: 12px; }
+  .wdq-grid .wdq-ic { height: 104px; border-radius: 16px; }
+  .wdq-grid .wdq-ic svg { width: 48px; height: 48px; }
+  .wdq-grid .wdq-opt-label { font-size: 16px; padding: 0 8px; min-height: 0; }
+  .wdq-grid .wdq-ind { top: 16px; right: 16px; width: 22px; height: 22px; }
+  .wdq-opt:hover { transform: translateY(-2px); }
+
+  .wdq-other { flex-direction: row; align-items: center; gap: 16px; padding: 14px 18px; }
+  .wdq-other label { white-space: nowrap; font-size: 14px; }
+  .wdq-other .wdq-field-bare { font-size: 17px; }
+
+  .wdq-list { display: grid; gap: 10px; grid-template-columns: repeat(1, minmax(0, 1fr)); max-width: 720px; }
+  .wdq-list--2col { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
+  .wdq-list .wdq-opt { min-height: 64px; padding: 10px 18px 10px 12px; gap: 14px; }
+  .wdq-list .wdq-ic { width: 44px; height: 44px; }
+  .wdq-list .wdq-ic svg { width: 26px; height: 26px; }
+  .wdq-list .wdq-opt-label { font-size: 16px; padding-left: 6px; }
+
+  .wdq-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .wdq-tiles .wdq-opt { min-height: 142px; border-radius: 20px; gap: 14px; }
+  .wdq-tiles .wdq-ic { width: 44px; height: 44px; border-radius: 12px; }
+  .wdq-tiles .wdq-ic svg { width: 26px; height: 26px; }
+  .wdq-tiles .wdq-opt-label { font-size: 15px; }
+
+  .wdq-sum { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .wdq-sumwrap { gap: 14px; }
+  .wdq-sum .wdq-opt { min-height: 170px; padding: 18px; border-radius: 22px; }
+  .wdq-sum .wdq-ind { top: 16px; right: 16px; }
+  .wdq-sum-lo, .wdq-sum-hi { font-size: 28px; letter-spacing: -0.035em; }
+  .wdq-sum-lo--word { font-size: 15px; }
+  .wdq-sum-per { font-size: 13px; }
+  .wdq-note { font-size: 14px; align-items: center; }
+  .wdq-note svg { margin-top: 0; }
+
+  .wdq-channel { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .wdq-channel .wdq-opt { min-height: 170px; justify-content: space-between; gap: 18px; padding: 18px; border-radius: 22px; }
+  .wdq-channel .wdq-ic { width: 56px; height: 56px; }
+  .wdq-channel .wdq-ic svg { width: 30px; height: 30px; }
+  .wdq-ch-name { font-size: 18px; }
+  .wdq-ch-sub { font-size: 13px; }
+  .wdq-channel .wdq-ind { top: 16px; right: 16px; }
+
+  /* десктопна внутрішня навігація */
+  .wdq-nav-d {
+    display: flex; margin-top: auto; justify-content: space-between; align-items: center; padding-top: 8px; gap: 16px;
+  }
+  .wdq-nav-d--end { justify-content: flex-end; }
+  .wdq-back-d {
+    height: 52px; padding: 0 18px 0 12px; border-radius: 14px; border: 1px solid rgba(29,29,27,0.12);
+    background: var(--wdq-card); font-size: 15px; font-weight: 500; color: var(--wdq-ink);
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
+    transition: transform var(--wdq-dur) var(--wdq-ease);
+  }
+  .wdq-back-d:hover { transform: translateY(-1px); }
+  .wdq-nav-d-right { display: flex; align-items: center; gap: 16px; }
+  .wdq-cta-d {
+    height: 56px; padding: 0 28px; border: 0; border-radius: var(--wdq-r-btn); font-size: 16px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--wdq-ink); color: var(--wdq-yellow);
+    transition: transform var(--wdq-dur) var(--wdq-ease);
+  }
+  .wdq-cta-d:hover:not(:disabled) { transform: translateY(-1px); }
+  .wdq-cta-d:disabled { background: var(--wdq-disabled-bg); color: var(--wdq-disabled-fg); cursor: not-allowed; }
+  .wdq-cta-d--shadow { box-shadow: var(--wdq-shadow-cta); }
+  .wdq-nav-d .wdq-cta-note { color: var(--wdq-muted); font-size: 13px; }
+
+  /* aside / картки */
+  .wdq-aside { width: 372px; flex-shrink: 0; gap: 12px; }
+  .wdq-expert { border-radius: var(--wdq-r-block); padding: 22px; column-gap: 14px; row-gap: 14px; align-items: center; }
+  .wdq-expert > .wdq-expert-av { grid-row: 1; }
+  .wdq-expert > .wdq-expert-id { grid-column: 2; align-self: center; }
+  .wdq-expert > .wdq-chip { grid-column: 1 / -1; }
+  .wdq-expert > .wdq-expert-comment { grid-column: 1 / -1; }
+  .wdq-expert-av { width: 60px; height: 60px; }
+  .wdq-expert-name { font-size: 16px; }
+  .wdq-expert-role { font-size: 13px; }
+  .wdq-expert-comment { font-size: 15px; line-height: 1.55; }
+  .wdq-audit { border-radius: var(--wdq-r-block); padding: 22px; gap: 14px; }
+  .wdq-audit-title { font-size: 16px; }
+  .wdq-audit ul { grid-template-columns: 1fr; gap: 11px; }
+  .wdq-audit li { font-size: 14px; align-items: center; }
+  .wdq-audit li svg { margin-top: 0; }
+  .wdq-audit-hl { border-radius: 14px; padding: 12px 14px; font-size: 14px; }
+
+  /* КЕЙСИ desktop — 3 в ряд */
+  .wdq-cases-head { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 40px; padding: 8px 4px 4px; }
+  .wdq-cases-head h1 { font-size: 34px; line-height: 1.1; letter-spacing: -0.035em; max-width: 640px; }
+  .wdq-cases-head p { font-size: 15px; max-width: 460px; }
+  .wdq-carousel {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+    overflow: visible; margin: 0; padding: 0;
+  }
+  .wdq-case { width: auto; }
+  .wdq-case-img, .wdq-case-ph { height: 170px; }
+  .wdq-case-body { padding: 18px 20px 20px; gap: 14px; }
+  .wdq-case-name { font-size: 16px; }
+  .wdq-metric-v { font-size: 32px; letter-spacing: -0.045em; }
+  .wdq-metric-l { font-size: 13px; }
+  .wdq-case-note { font-size: 14px; padding-top: 12px; }
+  .wdq-case-dots { display: none; }
+  .wdq-cases .wdq-expert, .wdq-cases-pre { display: none; } /* mobile-блоки кейсів ховаємо */
+  .wdq-cases-foot { display: flex; gap: 12px; }
+  .wdq-cases-expert {
+    flex-grow: 1; background: var(--wdq-card); border-radius: var(--wdq-r-block); border: 1px solid var(--wdq-line);
+    padding: 18px 20px; display: flex; gap: 16px; align-items: flex-start;
+  }
+  .wdq-cases-expert img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .wdq-cases-cta {
+    width: 440px; flex-shrink: 0; background: var(--wdq-yellow); border-radius: var(--wdq-r-block);
+    padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; justify-content: space-between;
+    font-size: 14px; line-height: 1.45; font-weight: 500;
+  }
+  .wdq-cases-cta-row { display: flex; gap: 10px; }
+  .wdq-cases-cta-row .wdq-back { width: 54px; height: 54px; border-color: rgba(29,29,27,0.2); }
+  .wdq-cases-cta-row .wdq-cta-go {
+    flex-grow: 1; height: 54px; border: 0; border-radius: var(--wdq-r-btn); background: var(--wdq-ink);
+    color: var(--wdq-yellow); font-size: 16px; font-weight: 600; display: flex; align-items: center;
+    justify-content: center; gap: 10px; cursor: pointer; font-family: inherit;
+  }
+
+  /* ПОСИЛАННЯ desktop */
+  .wdq-links-field { max-width: 720px; border-radius: var(--wdq-r-card); padding: 16px; gap: 12px; }
+  .wdq-links-label { font-size: 14px; }
+  .wdq-links-ic { width: 40px; height: 40px; }
+  .wdq-links-ic svg { width: 20px; height: 20px; }
+  .wdq-textarea { border-radius: 14px; padding: 14px 16px; font-size: 17px; line-height: 1.5; }
+
+  /* КОНТАКТ desktop */
+  .wdq-panel--contact { padding: 44px 48px 36px; gap: 16px; }
+  .wdq-contact-block { display: contents; }
+  .wdq-panel--contact h1 { font-size: 38px; line-height: 1.1; letter-spacing: -0.035em; padding: 0; }
+  .wdq-contact-label { font-size: 14px; margin-top: 8px; padding: 0; }
+  .wdq-field { height: 76px; max-width: 560px; padding: 0 20px 0 12px; border-radius: 20px; }
+  .wdq-field-ic { width: 52px; height: 52px; }
+  .wdq-field-ic svg { width: 28px; height: 28px; }
+  .wdq-field input { font-size: 22px; }
+  .wdq-err-msg, .wdq-contact-hint { font-size: 14px; padding: 0; max-width: 560px; }
+  .wdq-change { padding: 4px 0; }
+  .wdq-contact-nav { margin-top: auto; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding-top: 8px; }
+  .wdq-contact-nav-row { display: flex; gap: 12px; }
+  .wdq-contact-nav .wdq-back { width: 64px; height: 64px; border-color: rgba(29,29,27,0.2); border-radius: var(--wdq-r-btn); }
+  .wdq-submit-d {
+    height: 64px; padding: 0 34px; border: 0; border-radius: var(--wdq-r-btn); background: var(--wdq-ink);
+    color: var(--wdq-yellow); font-size: 18px; font-weight: 600; display: flex; align-items: center;
+    gap: 12px; cursor: pointer; box-shadow: var(--wdq-shadow-cta); font-family: inherit;
+  }
+  .wdq-submit-d:hover:not(:disabled) { transform: translateY(-1px); }
+  .wdq-submit-d:disabled { opacity: .7; cursor: wait; }
+  .wdq-contact-nav { display: flex; }
+  .wdq-summary.wdq-summary--m { display: none; }
+  .wdq-summary.wdq-summary--d { display: flex; }
+  .wdq-summary { border-radius: var(--wdq-r-block); padding: 22px; gap: 14px; }
+  .wdq-summary-badge { font-size: 14px; }
+  .wdq-summary-bar { height: 7px; border-radius: 7px; }
+  .wdq-summary-chips span { padding: 6px 10px; }
+  .wdq-summary-note { display: block; font-size: 13px; color: var(--wdq-disabled-bg); line-height: 1.45; }
+
+  /* ДЯКУЄМО desktop */
+  .wdq-done { flex-direction: row; display: flex; gap: 12px; padding-top: 0; min-height: 676px; }
+  .wdq-done-card { flex-grow: 1; padding: 48px; gap: 20px; }
+  .wdq-done-badge { width: 72px; height: 72px; box-shadow: 4px 4px 0 var(--wdq-ink); }
+  .wdq-done-badge svg { width: 34px; height: 34px; }
+  .wdq-done-card h1 { font-size: 46px; line-height: 1.05; letter-spacing: -0.04em; }
+  .wdq-done-text { font-size: 18px; max-width: 560px; }
+  .wdq-done-expert img { width: 44px; height: 44px; }
+  .wdq-done-expert span { font-size: 14px; }
+  .wdq-answers { margin-top: auto; border-radius: var(--wdq-r-card); align-self: stretch; }
+  .wdq-answers.wdq-answers--m { display: none; }
+  .wdq-answers.wdq-answers--d { display: flex; }
+  .wdq-answers-chips span { font-size: 13px; padding: 6px 12px; }
+  .wdq-done-aside { width: 440px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+  .wdq-next { border-radius: var(--wdq-r-block); padding: 28px; gap: 18px; flex-grow: 1; }
+  .wdq-next h2 { font-size: 20px; }
+  .wdq-next ol { gap: 18px; }
+  .wdq-next li { gap: 14px; }
+  .wdq-next-n { width: 32px; height: 32px; font-size: 14px; }
+  .wdq-next-txt b { font-size: 15px; }
+  .wdq-next-txt span { font-size: 14px; }
+  .wdq-caseslink { height: 60px; border-radius: 18px; background: var(--wdq-ink); color: var(--wdq-yellow); border: 0; font-size: 16px; }
+
+  /* на десктопі липкий футер не потрібен */
+  .wdq-footer { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wdq { --wdq-dur: 0ms; --wdq-screen-in: 0ms; }
+  .wdq-scr { animation: none; }
+  .wdq-spinner { animation-duration: 1.4s; }
+  .wdq-opt:hover, .wdq-cta:hover, .wdq-btn:hover { transform: none; }
+}

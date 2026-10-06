@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { createLeadRouter } from "./routes/lead.js";
 
 const assetsDir = fileURLToPath(new URL("../assets/", import.meta.url));
+const ogImage = fileURLToPath(new URL("../assets/og-quiz.jpg", import.meta.url));
 const distDir = fileURLToPath(new URL("../dist/", import.meta.url));
 const distIndex = fileURLToPath(new URL("../dist/index.html", import.meta.url));
 // Джерела фронтенду (vanilla ES-модулі + CSS) — віддаємо напряму, якщо білду немає.
@@ -61,6 +62,13 @@ export function createApp({ seen } = {}) {
 
   // Статика фото/лого (і в dev через проксі Vite, і в production).
   app.use("/assets", express.static(assetsDir, { maxAge: "7d", immutable: false }));
+
+  // OG-картинка для прев'ю в соцмережах/месенджерах — за кореневим шляхом /og-quiz.jpg
+  // (так прописано в <meta property="og:image">). Реальний файл лежить в assets/og-quiz.jpg.
+  // Маршрут ДО SPA-fallback, інакше запит віддав би index.html замість картинки.
+  app.get("/og-quiz.jpg", (req, res) => {
+    res.sendFile(ogImage, (err) => { if (err && !res.headersSent) res.status(404).end(); });
+  });
 
   // Роздача фронтенду.
   // Пріоритет — зібраний dist/ (якщо робили `npm run build`: мініфікований, хешований).

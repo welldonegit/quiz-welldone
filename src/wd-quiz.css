@@ -801,7 +801,11 @@
   .wdq-summary-note { display: block; font-size: 13px; color: var(--wdq-disabled-bg); line-height: 1.45; }
 
   /* ДЯКУЄМО desktop */
-  .wdq-done { flex-direction: row; display: flex; gap: 12px; padding-top: 0; min-height: 676px; }
+  /* Заповнюємо видиму висоту екрана (а не фіксовані 676px), щоб плашка «Ваші відповіді»
+     (margin-top:auto) і кнопка кейсів (через flex-grow у .wdq-next) ставали по низу екрана,
+     а не йшли під фолд на невисоких ноутбуках. Стеля 760px — щоб на дуже високих моніторах
+     блок не розтягувався нескінченно з великою порожнечею. */
+  .wdq-done { flex-direction: row; display: flex; gap: 12px; padding-top: 0; min-height: min(760px, 100%); }
   .wdq-done-card { flex-grow: 1; padding: 48px; gap: 20px; }
   .wdq-done-badge { width: 72px; height: 72px; box-shadow: 4px 4px 0 var(--wdq-ink); }
   .wdq-done-badge svg { width: 34px; height: 34px; }

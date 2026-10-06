@@ -80,7 +80,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 .output
 
 # Gatsby files
@@ -149,6 +148,8 @@ vite.config.ts.timestamp-*
 .turbo
 
 # wd-quiz backend
+# dist/ ігнорується: білд не потрібен — у production Node віддає джерела (/src, /shared, index.html)
+# напряму. Деплой = push → git pull → restart. (`npm run build` лишається як опційна оптимізація.)
 /dist/
 /data/
 .env

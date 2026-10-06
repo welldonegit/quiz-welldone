@@ -16,7 +16,7 @@ const seen = await loadRecentLeadIds();
 const app = createApp({ seen });
 
 app.listen(PORT, () => {
-  const mode = process.env.NODE_ENV === "production" ? "production (роздає dist/ + /api)" : "dev (тільки /api + /assets)";
+  const mode = process.env.NODE_ENV === "production" ? "production (роздає фронтенд + /api)" : "dev (тільки /api + /assets)";
   console.log(`[wd-quiz] сервер запущено (${PORT}) — ${mode}; у памʼяті ${seen.size} lead_id за 24 год`);
 });
 

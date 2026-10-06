@@ -8,6 +8,10 @@ import { createLeadRouter } from "./routes/lead.js";
 const assetsDir = fileURLToPath(new URL("../assets/", import.meta.url));
 const distDir = fileURLToPath(new URL("../dist/", import.meta.url));
 const distIndex = fileURLToPath(new URL("../dist/index.html", import.meta.url));
+// Джерела фронтенду (vanilla ES-модулі + CSS) — віддаємо напряму, якщо білду немає.
+const srcDir = fileURLToPath(new URL("../src/", import.meta.url));
+const sharedDir = fileURLToPath(new URL("../shared/", import.meta.url));
+const rootIndex = fileURLToPath(new URL("../index.html", import.meta.url));
 
 export function createApp({ seen } = {}) {
   const app = express();
@@ -58,12 +62,23 @@ export function createApp({ seen } = {}) {
   // Статика фото/лого (і в dev через проксі Vite, і в production).
   app.use("/assets", express.static(assetsDir, { maxAge: "7d", immutable: false }));
 
-  // Production: роздача зібраного фронтенду.
+  // Роздача фронтенду.
+  // Пріоритет — зібраний dist/ (якщо робили `npm run build`: мініфікований, хешований).
+  // Якщо dist немає — віддаємо ДЖЕРЕЛА напряму: index.html + /src + /shared. Білд не потрібен,
+  // бо квіз — це нативні ES-модулі та звичайний CSS. Деплой: push → git pull → restart.
   if (existsSync(distDir)) {
     app.use(express.static(distDir, { index: false, maxAge: "1h" }));
     app.get(/^\/(?!api\/).*/, (req, res, next) => {
       if (req.method !== "GET") return next();
       res.sendFile(distIndex);
+    });
+  } else {
+    // .js віддається з правильним MIME (application/javascript) — ES-модулі працюють у браузері.
+    app.use("/src", express.static(srcDir, { maxAge: "1h" }));
+    app.use("/shared", express.static(sharedDir, { maxAge: "1h" }));
+    app.get(/^\/(?!api\/).*/, (req, res, next) => {
+      if (req.method !== "GET") return next();
+      res.sendFile(rootIndex);
     });
   }
 

@@ -58,11 +58,15 @@ assets/                   logo.svg, icons/, images/ (+ images/webp/)
 
 ## Аналітика
 
-Якщо на сторінці є `window.dataLayer` (GTM) — надсилаються події `quiz_view`, `quiz_start`,
-`quiz_step_view`, `quiz_answer`, `quiz_back`, `quiz_links_skipped`, `quiz_submit`,
-`quiz_submit_success`, `quiz_submit_error`. На успіх додатково `fbq('track','Lead')` і
-`gtag('event','generate_lead')`, якщо вони існують. UTM/`fbclid`/`gclid` зчитуються з URL і зберігаються
-в `sessionStorage`, щоб не губитися при навігації.
+Події квізу передаються **лише** в `window.dataLayer` (для GTM) через `analytics.js` — без
+`gtag`/GA4/`fbq`. GA4 та інші лічильники маркетолог підключає через GTM. Події: `quiz_start`,
+`quiz_step` (`step_name`, `step_number`), `quiz_answer` (`step_name`, `answer`), `quiz_back`
+(`step_name`), `quiz_submit_error` (`error_type`: `validation`|`network`|`server`|`rate_limit`) та
+`generate_lead` (лише після `200 {ok:true}`, один раз на `lead_id`; параметри: `contact_method`,
+`business_sphere`, `ad_budget`, `services_count`, `audit_type`, `links_provided`). Кожен push містить
+`quiz_id: "wd_quiz_v1"`; персональні дані (телефон, username, посилання, текст «іншої» сфери, `lead_id`)
+в dataLayer не потрапляють. Додайте `?wdq_debug=1` до URL, щоб бачити кожен push у `console.table`.
+UTM/`fbclid`/`gclid` зчитуються з URL і зберігаються в `sessionStorage`, щоб не губитися при навігації.
 
 ## Оновлення контенту
 

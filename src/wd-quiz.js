@@ -5,6 +5,7 @@
 import { CONTENT } from "./wd-quiz-content.js";
 import { ICONS } from "./wd-quiz-icons.js";
 import { normalizeUaDigits, isKnownOperatorCode, isValidUaMobile } from "../shared/ua-mobile-codes.js";
+import { track } from "./analytics.js";
 
 // Підказка про код оператора (жива валідація телефону)
 const OP_HINT = "Перевірте код оператора. Номер має починатися, наприклад, з 050, 067, 073, 093";
@@ -85,15 +86,28 @@ const picture = (rel, alt, imgAttrs = "") => {
 
 const log = (...a) => { if (QUIZ_CONFIG.debug) console.log("[wd-quiz]", ...a); };
 
-/* dataLayer / аналітика */
-function track(event, data) {
-  try {
-    if (typeof window === "undefined") return;
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(Object.assign({ event }, data || {}));
-    log("dataLayer", event, data || {});
-  } catch (e) { /* no-op */ }
-}
+/* Аналітика: track(event, params) живе в ./analytics.js (лише dataLayer.push для GTM).
+   Відповідність внутрішнього кроку → крок воронки (step_name) та його номер (step_number).
+   За цими назвами й номерами маркетолог будує воронку в GTM/GA4. */
+const STEP_MAP = {
+  start: { name: "start", number: 1 },
+  q1:    { name: "q1_sphere", number: 2 },
+  cases: { name: "cases", number: 3 },
+  q2:    { name: "q2_problem", number: 4 },
+  q3:    { name: "q3_ads_owner", number: 5 },
+  q4:    { name: "q4_services", number: 6 },
+  q5:    { name: "q5_budget", number: 7 },
+  q6:    { name: "q6_audit", number: 8 },
+  links: { name: "links", number: 9 },
+  q7:    { name: "q7_channel", number: 10 },
+  q8:    { name: "q8_contact", number: 11 },
+  done:  { name: "thanks", number: 12 },
+};
+const stepName = (s) => (STEP_MAP[s] ? STEP_MAP[s].name : s);
+const stepNumber = (s) => (STEP_MAP[s] ? STEP_MAP[s].number : 0);
+
+// Ідемпотентність generate_lead: один раз на lead_id (захист від подвійного кліку/повтору запиту).
+const GENERATED_LEADS = new Set();
 
 /* маска телефону: +380 XX XXX XX XX */
 function fmtPhone(v) {
@@ -158,9 +172,8 @@ class WDQuiz {
     this.root.classList.add("wdq");
     if (this.mode === "embed") this.root.classList.add("wdq--embed");
 
-    track("quiz_view", { mode: this.mode });
     this.render();
-    track("quiz_step_view", { step: this.state.step, step_index: PN[this.state.step] || 0 });
+    track("quiz_step", { step_name: stepName(this.state.step), step_number: stepNumber(this.state.step) });
     if (this.state.step !== "start") this.started = true;
   }
 
@@ -207,7 +220,8 @@ class WDQuiz {
     if (!this.started && step !== "start") { this.started = true; track("quiz_start", {}); }
     this.save();
     this.render();
-    track("quiz_step_view", { step, step_index: PN[step] || 0 });
+    // показ кожного екрана (включно з cases і thanks); повторний показ після «Назад» теж
+    track("quiz_step", { step_name: stepName(step), step_number: stepNumber(step) });
     const sc = this.root.querySelector(".wdq-scroll");
     if (sc) sc.scrollTop = 0;
 
@@ -216,8 +230,19 @@ class WDQuiz {
     else if (step === "links") { const t = this.root.querySelector(".wdq-textarea"); if (t) setTimeout(() => t.focus(), 30); }
     else if (prev !== step && step === "q1") { /* нічого */ }
   }
-  next() { const i = ORDER.indexOf(this.state.step); if (i < ORDER.length - 1) this.go(ORDER[i + 1], "fwd"); }
-  back() { track("quiz_back", { from_step: this.state.step }); const i = ORDER.indexOf(this.state.step); if (i > 0) this.go(ORDER[i - 1], "back"); }
+  next() {
+    const step = this.state.step;
+    // множинний вибір: відповідь надсилаємо при «Далі» (а не на кожному кліку), id через кому
+    if (Q[step] && Q[step].multi) {
+      track("quiz_answer", { step_name: stepName(step), answer: (this.state.a[step] || []).join(",") });
+    } else if (step === "links") {
+      // крок links: заповнено чи пропущено (самі посилання в dataLayer не передаємо)
+      track("quiz_answer", { step_name: stepName(step), answer: (this.state.links || "").trim() ? "filled" : "skipped" });
+    }
+    const i = ORDER.indexOf(step);
+    if (i < ORDER.length - 1) this.go(ORDER[i + 1], "fwd");
+  }
+  back() { track("quiz_back", { step_name: stepName(this.state.step) }); const i = ORDER.indexOf(this.state.step); if (i > 0) this.go(ORDER[i - 1], "back"); }
 
   focusContact() {
     setTimeout(() => {
@@ -239,13 +264,14 @@ class WDQuiz {
         if (k >= 0) cur.splice(k, 1); else cur.push(oid);
       }
       a[qid] = cur;
-      track("quiz_answer", { step: qid, value: cur.join(",") });
+      // множинний вибір: quiz_answer надсилаємо при «Далі» (у next()), не на кожному кліку
       this.save();
       this.syncAfterPick(qid); // точкове оновлення без перебудови екрана (без смикання)
     } else {
       const prev = a[qid];
       a[qid] = oid;
-      track("quiz_answer", { step: qid, value: oid });
+      // одиночний вибір: відповідь при кліку (для «Інша сфера» answer = "other", текст не передаємо)
+      track("quiz_answer", { step_name: stepName(qid), answer: oid });
       this.save();
       const opt = find(qid, oid);
       // q1 «Інша сфера»: показ/приховання поля вводу змінює розмітку → потрібен повний (але без анімації) рендер
@@ -342,15 +368,32 @@ class WDQuiz {
     const inp = r.querySelector(".wdq-field input"); if (inp) { inp.removeAttribute("aria-invalid"); inp.removeAttribute("aria-describedby"); }
   }
 
+  // Параметри generate_lead (без персональних даних: лише id/категорії та лічильники).
+  leadParams() {
+    const a = this.state.a;
+    return {
+      contact_method: a.q7 || "",                              // tg|viber|wa|call
+      business_sphere: a.q1 || "",                             // id сфери (для «Інша» — "other", без тексту)
+      ad_budget: a.q5 || "",                                   // id бюджету
+      services_count: (a.q4 || []).length,                     // число обраних послуг
+      audit_type: a.q6 || "",                                  // id відповіді q6
+      links_provided: (this.state.links || "").trim() ? "yes" : "no",
+    };
+  }
+
   async submit() {
     if (this.submitting) return; // подвійна відправка неможлива
-    if (!this.valid()) { this.state.err = true; this.serverErr = null; this.render(); return; }
+    if (!this.valid()) {
+      this.state.err = true; this.serverErr = null;
+      track("quiz_submit_error", { error_type: "validation" });
+      this.render();
+      return;
+    }
     this.submitting = true;
     this.netError = "";
     this.serverErr = null;
     this.render();
     const payload = this.buildPayload();
-    track("quiz_submit", { channel: payload.channel });
 
     let res;
     try {
@@ -358,7 +401,7 @@ class WDQuiz {
     } catch (err) {
       this.submitting = false;
       this.netError = "Не вдалося надіслати. Спробуйте ще раз";
-      track("quiz_submit_error", { channel: payload.channel, reason: "network", message: String((err && err.message) || err) });
+      track("quiz_submit_error", { error_type: "network" });
       this.render();
       return;
     }
@@ -368,9 +411,11 @@ class WDQuiz {
       try { data = await res.json(); } catch (e) {}
       this.submitting = false;
       this.clearStore();
-      track("quiz_submit_success", { channel: payload.channel, duplicate: !!data.duplicate });
-      try { if (typeof window.fbq === "function") window.fbq("track", "Lead"); } catch (e) {}
-      try { if (typeof window.gtag === "function") window.gtag("event", "generate_lead"); } catch (e) {}
+      // generate_lead — лише при 200 {ok:true} і один раз на lead_id (без дублів)
+      if (data && data.ok === true && !GENERATED_LEADS.has(this.state.lead_id)) {
+        GENERATED_LEADS.add(this.state.lead_id);
+        track("generate_lead", this.leadParams());
+      }
       this.go("done");
       return;
     }
@@ -382,18 +427,18 @@ class WDQuiz {
       const errs = data.errors || {};
       this.serverErr = errs.contact || Object.values(errs)[0] || null;
       this.state.err = true; // підсвітити поле контакту
-      track("quiz_submit_error", { channel: payload.channel, reason: "validation" });
+      track("quiz_submit_error", { error_type: "validation" });
       this.render();
       this.focusContact();
     } else if (res.status === 429) {
       let data = {};
       try { data = await res.json(); } catch (e) {}
       this.netError = data.message || "Забагато спроб. Спробуйте за кілька хвилин.";
-      track("quiz_submit_error", { channel: payload.channel, reason: "rate_limit" });
+      track("quiz_submit_error", { error_type: "rate_limit" });
       this.render();
     } else {
       this.netError = "Не вдалося надіслати. Спробуйте ще раз";
-      track("quiz_submit_error", { channel: payload.channel, reason: "server", status: res.status });
+      track("quiz_submit_error", { error_type: "server" });
       this.render();
     }
   }

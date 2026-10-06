@@ -2,7 +2,7 @@ import { Router } from "express";
 import { validateLead } from "../lib/validate.js";
 import { resolveUtm } from "../lib/utm.js";
 import { appendLead } from "../lib/storage.js";
-import { notifyLead } from "../lib/notify.js";
+import { notifyLeadInBackground } from "../lib/notify.js";
 
 const MIN_FILL_MS = 5000;     // швидше 5 с від старту квіза — вважаємо ботом
 const DEDUPE_TTL = 24 * 60 * 60 * 1000;
@@ -72,12 +72,8 @@ export function createLeadRouter({ seen = new Map() } = {}) {
       await appendLead(record);
       seen.set(data.lead_id, Date.now());
 
-      // 7) нотифікація (помилки не ламають відповідь користувачу)
-      try {
-        await notifyLead(record);
-      } catch (err) {
-        console.error("[notify] помилка (не критично):", err && err.message);
-      }
+      // 7) нотифікація — у фоні: користувач не чекає на Telegram, відповідь повертаємо одразу
+      notifyLeadInBackground(record);
 
       return res.status(200).json({ ok: true, lead_id: data.lead_id });
     } catch (err) {

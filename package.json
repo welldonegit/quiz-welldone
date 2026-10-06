@@ -11,6 +11,8 @@
     "dev:api": "node --watch --env-file-if-exists=.env server/index.js",
     "build": "vite build",
     "start": "NODE_ENV=production node --env-file-if-exists=.env server/index.js",
+    "tg:test": "node --env-file-if-exists=.env scripts/tg-check.js",
+    "tg:chatid": "node --env-file-if-exists=.env scripts/tg-chatid.js",
     "test": "node --test"
   },
   "dependencies": {
